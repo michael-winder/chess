@@ -41,4 +41,15 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         return promotionPiece;
     }
+
+    /**
+     *
+     * @return a version of ChessMove that is much easier to read a debug
+     */
+    @Override
+    public String toString() {
+        int [] start = {startPosition.getRow(),startPosition.getColumn()};
+        int [] end = {endPosition.getRow(),endPosition.getColumn()};
+        return "Start Position: [" + start[0] + "," + start[1] + "] End Position: [" + end[0] + "," + end[1] + "]";
+    }
 }

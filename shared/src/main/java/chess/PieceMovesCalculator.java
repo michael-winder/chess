@@ -45,12 +45,10 @@ public class PieceMovesCalculator {
             if (isOutOfBounds(possiblePosition)){
                 break;
             }
-            //The getPossiblePosition object is needed, because the Chessboard goes from 0-7, rather than 1-8
-            ChessPosition getPossiblePosition = new ChessPosition(possiblePosition.getRow() - 1, possiblePosition.getColumn()-1);
-            if (board.getPiece(getPossiblePosition) == null) {
+            if (board.getPiece(possiblePosition) == null) {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
                 possibleMoves.add(possibleMove);
-            } else if(color == board.getPiece(getPossiblePosition).getTeamColor()){
+            } else if(color == board.getPiece(possiblePosition).getTeamColor()){
                 break;
             } else {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
@@ -63,11 +61,10 @@ public class PieceMovesCalculator {
             if (isOutOfBounds(possiblePosition)){
                 break;
             }
-            ChessPosition getPossiblePosition = new ChessPosition(possiblePosition.getRow() - 1, possiblePosition.getColumn()-1);
-            if (board.getPiece(getPossiblePosition) == null) {
+            if (board.getPiece(possiblePosition) == null) {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
                 possibleMoves.add(possibleMove);
-            } else if(color == board.getPiece(getPossiblePosition).getTeamColor()){
+            } else if(color == board.getPiece(possiblePosition).getTeamColor()){
                 break;
             } else {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
@@ -80,11 +77,10 @@ public class PieceMovesCalculator {
             if (isOutOfBounds(possiblePosition)){
                 break;
             }
-            ChessPosition getPossiblePosition = new ChessPosition(possiblePosition.getRow() - 1, possiblePosition.getColumn()-1);
-            if (board.getPiece(getPossiblePosition) == null) {
+            if (board.getPiece(possiblePosition) == null) {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
                 possibleMoves.add(possibleMove);
-            } else if(color == board.getPiece(getPossiblePosition).getTeamColor()){
+            } else if(color == board.getPiece(possiblePosition).getTeamColor()){
                 break;
             } else {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
@@ -97,11 +93,10 @@ public class PieceMovesCalculator {
             if (isOutOfBounds(possiblePosition)){
                 break;
             }
-            ChessPosition getPossiblePosition = new ChessPosition(possiblePosition.getRow() - 1, possiblePosition.getColumn()-1);
-            if (board.getPiece(getPossiblePosition) == null) {
+            if (board.getPiece(possiblePosition) == null) {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
                 possibleMoves.add(possibleMove);
-            } else if(color == board.getPiece(getPossiblePosition).getTeamColor()){
+            } else if(color == board.getPiece(possiblePosition).getTeamColor()){
                 break;
             } else {
                 ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);

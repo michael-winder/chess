@@ -52,4 +52,14 @@ public class ChessMove {
         int [] end = {endPosition.getRow(),endPosition.getColumn()};
         return "Start Position: [" + start[0] + "," + start[1] + "] End Position: [" + end[0] + "," + end[1] + "]";
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

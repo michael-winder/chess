@@ -53,6 +53,21 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         PieceMovesCalculator possibilities = new PieceMovesCalculator(board,myPosition);
-        return possibilities.bishopMovesCalculator();
+        if (board.getPiece(myPosition).getPieceType() == PieceType.BISHOP) {
+            return possibilities.bishopMovesCalculator();
+        } else if (board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
+            return possibilities.rookMovesCalculator();
+        }
+        else return new ArrayList<>();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }

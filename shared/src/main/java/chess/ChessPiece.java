@@ -58,8 +58,13 @@ public class ChessPiece {
             return possibilities.bishopMovesCalculator();
         } else if (board.getPiece(myPosition).getPieceType() == PieceType.ROOK) {
             return possibilities.rookMovesCalculator();
-        }
-        else return new ArrayList<>();
+        } else if (board.getPiece(myPosition).getPieceType() == PieceType.QUEEN) {
+            return possibilities.queenMovesCalculator();
+        } else if (board.getPiece(myPosition).getPieceType() == PieceType.KNIGHT) {
+            return possibilities.knightMovesCalculator();
+        } else if (board.getPiece(myPosition).getPieceType() == PieceType.KING) {
+            return possibilities.kingMovesCalculator();
+        } else return new ArrayList<>();
     }
 
     @Override

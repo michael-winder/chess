@@ -64,7 +64,7 @@ public class ChessPiece {
             return possibilities.knightMovesCalculator();
         } else if (board.getPiece(myPosition).getPieceType() == PieceType.KING) {
             return possibilities.kingMovesCalculator();
-        } else return new ArrayList<>();
+        } else return possibilities.pawnMovesCalculator();
     }
 
     @Override

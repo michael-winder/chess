@@ -54,7 +54,11 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = currentBoard.getPiece(startPosition);
+        Collection<ChessMove> validMoves = piece.pieceMoves(currentBoard,startPosition);
+        for (ChessMove : validMoves){
+            ChessBoard testBoard = currentBoard.clone();
+        }
     }
 
     /**
@@ -64,7 +68,13 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if (validMoves.contains(move)){
+            currentBoard.addPiece(move.getEndPosition(),currentBoard.getPiece(move.getStartPosition()));
+            currentBoard.addPiece(move.getStartPosition(),null);
+        } else {
+            throw new InvalidMoveException("That move is invalid");
+        }
     }
 
     /**
@@ -104,8 +114,8 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        for (int row = 0; row < 8; row++){
-            for (int col = 0; col < 8; col++){
+        for (int row = 1; row < 9; row++){
+            for (int col = 1; col < 9; col++){
                 ChessPosition boardPosition = new ChessPosition(row,col);
                 currentBoard.addPiece(boardPosition,board.getPiece(boardPosition));
             }
@@ -120,4 +130,6 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return currentBoard;
     }
+
+
 }

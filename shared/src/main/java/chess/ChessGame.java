@@ -9,16 +9,20 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-
+    private final ChessBoard currentBoard;
+    private int turnTracker;
     public ChessGame() {
-
+        currentBoard = new ChessBoard();
+        turnTracker = 1;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        throw new RuntimeException("Not implemented");
+        if (turnTracker % 2 == 1){
+            return TeamColor.WHITE;
+        } else return TeamColor.BLACK;
     }
 
     /**
@@ -27,7 +31,11 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        throw new RuntimeException("Not implemented");
+        if (team == TeamColor.BLACK){
+            turnTracker = 2;
+        } else {
+            turnTracker = 1;
+        }
     }
 
     /**
@@ -96,7 +104,12 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        for (int row = 0; row < 8; row++){
+            for (int col = 0; col < 8; col++){
+                ChessPosition boardPosition = new ChessPosition(row,col);
+                currentBoard.addPiece(boardPosition,board.getPiece(boardPosition));
+            }
+        }
     }
 
     /**
@@ -105,6 +118,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return currentBoard;
     }
 }

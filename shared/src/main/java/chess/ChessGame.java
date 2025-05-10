@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.zip.CheckedInputStream;
 
 /**
@@ -148,7 +149,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return isInCheck(teamColor) && validMoves(currentBoard.getKing(teamColor)).isEmpty();
     }
 
     /**
@@ -159,7 +160,12 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (teamColor == TeamColor.WHITE){
+            teamColor = TeamColor.BLACK;
+        } else {
+            teamColor = TeamColor.WHITE;
+        }
+        return (getOpponentMoveDestinations(teamColor,currentBoard).isEmpty());
     }
 
     /**
@@ -185,5 +191,17 @@ public class ChessGame {
         return currentBoard;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return turnTracker == chessGame.turnTracker && Objects.equals(currentBoard, chessGame.currentBoard);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(currentBoard, turnTracker);
+    }
 }

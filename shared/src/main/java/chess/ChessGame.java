@@ -57,6 +57,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = currentBoard.getPiece(startPosition);
+        if (piece == null){
+            return new ArrayList<>();
+        }
         Collection<ChessMove> validMoves = piece.pieceMoves(currentBoard,startPosition);
         Collection<ChessMove> invalidMoves = new ArrayList<>();
         TeamColor color = piece.getTeamColor();
@@ -84,9 +87,21 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        ChessPiece piece = currentBoard.getPiece(move.getStartPosition());
+        ChessPiece endPiece;
+        if (piece == null || piece.getTeamColor() != getTeamTurn()){
+            throw new InvalidMoveException("That move is invalid");
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && (move.getEndPosition().getRow() == 8 || move.getEndPosition().getRow() == 1)){
+            ChessPiece.PieceType movedPiece = move.getPromotionPiece();
+            endPiece = new ChessPiece(piece.getTeamColor(), movedPiece);
+        } else{
+            endPiece = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
+        }
         if (validMoves.contains(move)){
-            currentBoard.addPiece(move.getEndPosition(),currentBoard.getPiece(move.getStartPosition()));
+            currentBoard.addPiece(move.getEndPosition(),endPiece);
             currentBoard.addPiece(move.getStartPosition(),null);
+            turnTracker++;
         } else {
             throw new InvalidMoveException("That move is invalid");
         }

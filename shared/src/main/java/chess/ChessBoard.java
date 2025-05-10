@@ -37,6 +37,14 @@ public class ChessBoard implements Cloneable{
     }
 
     /**
+     * This function is useful for many operations in the ChessGame class
+     * @return the position of the king of the color specified
+     */
+    public ChessPosition getKing(ChessGame.TeamColor teamColor){
+
+    }
+
+    /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */

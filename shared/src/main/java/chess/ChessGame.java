@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.zip.CheckedInputStream;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -84,9 +86,32 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessPosition> opponentMoveDestinations = getOpponentMoveDestinations(teamColor);
+        
     }
 
+    /**
+     * This acts as a helper function for isInCheck.
+     * returns a collection of all possible ending positions of team moves
+     */
+    public Collection<ChessPosition> getOpponentMoveDestinations(TeamColor teamColor){
+        Collection<ChessPosition> opponentMoveDestinations = new ArrayList<>();
+        // iterates through the board and gets each piece
+        for (int row  = 1; row < 9; row++){
+            for (int col = 1; col < 9; col++){
+                ChessPosition piecePosition = new ChessPosition(row,col);
+                ChessPiece piece = currentBoard.getPiece(piecePosition);
+                // if the piece is not null and is the opposite color, the endPosition of each move is added to teamMoveDestinations
+                if (piece != null && piece.getTeamColor() != teamColor){
+                    Collection<ChessMove> teamMoves = piece.pieceMoves(currentBoard,piecePosition);
+                    for (ChessMove move : teamMoves){
+                        opponentMoveDestinations.add(move.getEndPosition());
+                    }
+                }
+            }
+        }
+        return opponentMoveDestinations;
+    }
     /**
      * Determines if the given team is in checkmate
      *

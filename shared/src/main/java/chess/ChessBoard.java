@@ -41,7 +41,16 @@ public class ChessBoard implements Cloneable{
      * @return the position of the king of the color specified
      */
     public ChessPosition getKing(ChessGame.TeamColor teamColor){
-
+        for (int row  = 1; row < 9; row++){
+            for (int col = 1; col < 9; col++){
+                ChessPosition piecePosition = new ChessPosition(row,col);
+                ChessPiece piece = this.getPiece(piecePosition);
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
+                    return piecePosition;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -95,20 +104,17 @@ public class ChessBoard implements Cloneable{
     }
 
     @Override
-    protected ChessBoard clone(){
-        try{
-            ChessBoard clone = (ChessBoard) super.clone();
+    protected ChessBoard clone() {
 
-            for (int row = 1; row < 9; row++){
-                for (int col = 1; col < 9; col++){
-                    ChessPosition boardPosition = new ChessPosition(row,col);
-                    clone.addPiece(boardPosition,getPiece(boardPosition));
-                }
+        ChessBoard clone = new ChessBoard();
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPosition boardPosition = new ChessPosition(row, col);
+                clone.addPiece(boardPosition, getPiece(boardPosition));
             }
-            return clone;
-        } catch (CloneNotSupportedException e){
-            throw new RuntimeException(e);
         }
+        return clone;
+
 
     }
 }

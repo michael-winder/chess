@@ -58,9 +58,22 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = currentBoard.getPiece(startPosition);
         Collection<ChessMove> validMoves = piece.pieceMoves(currentBoard,startPosition);
-        for (ChessMove : validMoves){
+        Collection<ChessMove> invalidMoves = new ArrayList<>();
+        TeamColor color = piece.getTeamColor();
+        for (ChessMove move : validMoves){
             ChessBoard testBoard = currentBoard.clone();
+            testBoard.addPiece(move.getEndPosition(),testBoard.getPiece(move.getStartPosition()));
+            testBoard.addPiece(move.getStartPosition(),null);
+            Collection<ChessPosition> opponentMoveDestinations = getOpponentMoveDestinations(color, testBoard);
+            ChessPosition kingPosition = testBoard.getKing(color);
+            if(opponentMoveDestinations.contains(kingPosition)){
+                invalidMoves.add(move);
+            }
         }
+        for (ChessMove invalidMove : invalidMoves){
+            validMoves.remove(invalidMove);
+        }
+        return validMoves;
     }
 
     /**
@@ -86,24 +99,25 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessPosition> opponentMoveDestinations = getOpponentMoveDestinations(teamColor);
-        
+        Collection<ChessPosition> opponentMoveDestinations = getOpponentMoveDestinations(teamColor,currentBoard);
+        ChessPosition kingPosition = currentBoard.getKing(teamColor);
+        return opponentMoveDestinations.contains(kingPosition);
     }
 
     /**
      * This acts as a helper function for isInCheck.
      * returns a collection of all possible ending positions of team moves
      */
-    public Collection<ChessPosition> getOpponentMoveDestinations(TeamColor teamColor){
+    public Collection<ChessPosition> getOpponentMoveDestinations(TeamColor teamColor,ChessBoard board){
         Collection<ChessPosition> opponentMoveDestinations = new ArrayList<>();
         // iterates through the board and gets each piece
         for (int row  = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
                 ChessPosition piecePosition = new ChessPosition(row,col);
-                ChessPiece piece = currentBoard.getPiece(piecePosition);
+                ChessPiece piece = board.getPiece(piecePosition);
                 // if the piece is not null and is the opposite color, the endPosition of each move is added to teamMoveDestinations
                 if (piece != null && piece.getTeamColor() != teamColor){
-                    Collection<ChessMove> teamMoves = piece.pieceMoves(currentBoard,piecePosition);
+                    Collection<ChessMove> teamMoves = piece.pieceMoves(board,piecePosition);
                     for (ChessMove move : teamMoves){
                         opponentMoveDestinations.add(move.getEndPosition());
                     }

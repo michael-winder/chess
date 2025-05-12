@@ -16,6 +16,7 @@ public class ChessGame {
     private int turnTracker;
     public ChessGame() {
         currentBoard = new ChessBoard();
+        currentBoard.resetBoard();
         turnTracker = 1;
     }
 
@@ -68,7 +69,7 @@ public class ChessGame {
             ChessBoard testBoard = currentBoard.clone();
             testBoard.addPiece(move.getEndPosition(),testBoard.getPiece(move.getStartPosition()));
             testBoard.addPiece(move.getStartPosition(),null);
-            Collection<ChessPosition> opponentMoveDestinations = teamMoveDestinations(color, testBoard, true);
+            Collection<ChessPosition> opponentMoveDestinations = teamMovePositions(color, testBoard, true,false);
             ChessPosition kingPosition = testBoard.getKing(color);
             if(opponentMoveDestinations.contains(kingPosition)){
                 invalidMoves.add(move);
@@ -115,7 +116,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        Collection<ChessPosition> opponentMoveDestinations = teamMoveDestinations(teamColor,currentBoard,true);
+        Collection<ChessPosition> opponentMoveDestinations = teamMovePositions(teamColor,currentBoard,true,false);
         ChessPosition kingPosition = currentBoard.getKing(teamColor);
         return opponentMoveDestinations.contains(kingPosition);
     }
@@ -126,9 +127,10 @@ public class ChessGame {
      * @param teamColor pass in a team color
      * @param board pass in the board you would like to test on
      * @param opponent true if you would like the opponent's moves, false if you would like teamColor's moves
+     * @param start If true, the function will return the start positions instead. False will return end positions
      */
-    public Collection<ChessPosition> teamMoveDestinations(TeamColor teamColor,ChessBoard board, Boolean opponent){
-        Collection<ChessPosition> opponentMoveDestinations = new ArrayList<>();
+    public Collection<ChessPosition> teamMovePositions(TeamColor teamColor,ChessBoard board, Boolean opponent, Boolean start){
+        Collection<ChessPosition> teamMovePositions = new ArrayList<>();
         // iterates through the board and gets each piece
         if (opponent == true){
             if (teamColor == TeamColor.WHITE){
@@ -145,12 +147,16 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() == teamColor){
                     Collection<ChessMove> teamMoves = piece.pieceMoves(board,piecePosition);
                     for (ChessMove move : teamMoves){
-                        opponentMoveDestinations.add(move.getEndPosition());
+                        if (start == true){
+                            teamMovePositions.add(move.getStartPosition());
+                        } else {
+                            teamMovePositions.add(move.getEndPosition());
+                        }
                     }
                 }
             }
         }
-        return opponentMoveDestinations;
+        return teamMovePositions;
     }
     /**
      * Determines if the given team is in checkmate
@@ -160,8 +166,15 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor) && validMoves(currentBoard.getKing(teamColor)).isEmpty()){
-            Collection<ChessPosition> teamMoves = teamMoveDestinations(teamColor,currentBoard,false);
-            return true;
+            Collection<ChessPosition> teamMoves = teamMovePositions(teamColor,currentBoard,false,true);
+            Collection<ChessMove> allValidMoves = new ArrayList<>();
+            if (teamMoves.isEmpty()){
+                return true;
+            }
+            for (ChessPosition position : teamMoves){
+                allValidMoves.addAll(validMoves(position));
+            }
+            return allValidMoves.isEmpty();
         }
         else return false;
     }
@@ -174,8 +187,14 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return (teamMoveDestinations(teamColor,currentBoard,false).isEmpty());
-    }
+        Collection<ChessPosition> teamMoves = teamMovePositions(teamColor,currentBoard,false,true);
+        Collection<ChessPosition> validTeamMoves = new ArrayList<>();
+//        for (ChessPosition startPosition : teamMoves){
+//            validTeamMoves.addAll(validMoves(startPosition));
+//        }
+        ChessPosition king = currentBoard.getKing(teamColor);
+        return (validMoves(king).isEmpty() && teamMoves.isEmpty());
+        }
 
     /**
      * Sets this game's chessboard with a given board

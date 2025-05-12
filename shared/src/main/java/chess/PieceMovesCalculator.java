@@ -60,31 +60,31 @@ public class PieceMovesCalculator {
      * @return a collection of possible moves for a bishop
      */
     public Collection<ChessMove> bishopMovesCalculator(){
-        ultimateCalculator(1,1,7,null);
-        ultimateCalculator(-1,1,7,null);
-        ultimateCalculator(1,-1,7,null);
-        ultimateCalculator(-1,-1,7,null);
+        ultimateCalculator(1,1,8,null);
+        ultimateCalculator(-1,1,8,null);
+        ultimateCalculator(1,-1,8,null);
+        ultimateCalculator(-1,-1,8,null);
         return possibleMoves;
     }
 
 
     public Collection<ChessMove> rookMovesCalculator(){
-        ultimateCalculator(1,0,7,null);
-        ultimateCalculator(0,1,7,null);
-        ultimateCalculator(-1,0,7,null);
-        ultimateCalculator(0,-1,7,null);
+        ultimateCalculator(1,0,8,null);
+        ultimateCalculator(0,1,8,null);
+        ultimateCalculator(-1,0,8,null);
+        ultimateCalculator(0,-1,8,null);
         return possibleMoves;
     }
 
     public Collection<ChessMove> queenMovesCalculator(){
-        ultimateCalculator(1,1,7,null);
-        ultimateCalculator(-1,1,7,null);
-        ultimateCalculator(1,-1,7,null);
-        ultimateCalculator(-1,-1,7,null);
-        ultimateCalculator(1,0,7,null);
-        ultimateCalculator(0,1,7,null);
-        ultimateCalculator(-1,0,7,null);
-        ultimateCalculator(0,-1,7,null);
+        ultimateCalculator(1,1,8,null);
+        ultimateCalculator(-1,1,8,null);
+        ultimateCalculator(1,-1,8,null);
+        ultimateCalculator(-1,-1,8,null);
+        ultimateCalculator(1,0,8,null);
+        ultimateCalculator(0,1,8,null);
+        ultimateCalculator(-1,0,8,null);
+        ultimateCalculator(0,-1,8,null);
         return possibleMoves;
     }
 

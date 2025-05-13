@@ -188,12 +188,12 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         Collection<ChessPosition> teamMoves = teamMovePositions(teamColor,currentBoard,false,true);
-        Collection<ChessPosition> validTeamMoves = new ArrayList<>();
-//        for (ChessPosition startPosition : teamMoves){
-//            validTeamMoves.addAll(validMoves(startPosition));
-//        }
+        Collection<ChessMove> validTeamMoves = new ArrayList<>();
+        for (ChessPosition startPosition : teamMoves){
+            validTeamMoves.addAll(validMoves(startPosition));
+        }
         ChessPosition king = currentBoard.getKing(teamColor);
-        return (validMoves(king).isEmpty() && teamMoves.isEmpty());
+        return (validMoves(king).isEmpty() && validTeamMoves.isEmpty() && !isInCheck(teamColor));
         }
 
     /**

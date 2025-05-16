@@ -114,81 +114,51 @@ public class PieceMovesCalculator {
 
     public Collection<ChessMove> pawnMovesCalculator(){
         if (color == ChessGame.TeamColor.WHITE) {
-            ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-            if(myPosition.getRow() == 2) {
-                ChessPosition possiblePosition2 = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn());
-                if (board.getPiece(possiblePosition) == null && board.getPiece(possiblePosition2) == null) {
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition2, null);
-                    possibleMoves.add(possibleMove);
-                }
-            }
-            if (myPosition.getRow() == 7) {
-                if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN);
-                    possibleMoves.add(possibleMove);
-                    ChessMove possibleMove2 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK);
-                    possibleMoves.add(possibleMove2);
-                    ChessMove possibleMove3 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.KNIGHT);
-                    possibleMoves.add(possibleMove3);
-                    ChessMove possibleMove4 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.BISHOP);
-                    possibleMoves.add(possibleMove4);
-                }
-                ultimateCalculator(1,1,2,ChessPiece.PieceType.QUEEN);
-                ultimateCalculator(1,-1,2,ChessPiece.PieceType.QUEEN);
-                ultimateCalculator(1,1,2,ChessPiece.PieceType.ROOK);
-                ultimateCalculator(1,-1,2,ChessPiece.PieceType.ROOK);
-                ultimateCalculator(1,1,2,ChessPiece.PieceType.KNIGHT);
-                ultimateCalculator(1,-1,2,ChessPiece.PieceType.KNIGHT);
-                ultimateCalculator(1,1,2,ChessPiece.PieceType.BISHOP);
-                ultimateCalculator(1,-1,2,ChessPiece.PieceType.BISHOP);
-            } else {
-                if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    possibleMoves.add(possibleMove);
-                }
-                ultimateCalculator(1,1,2,null);
-                ultimateCalculator(1,-1,2,null);
-            }
-        } else if (color == ChessGame.TeamColor.BLACK){
-            ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-            if(myPosition.getRow() == 7) {
-                ChessPosition possiblePosition2 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
-                if (board.getPiece(possiblePosition) == null && board.getPiece(possiblePosition2) == null) {
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition2, null);
-                    possibleMoves.add(possibleMove);
-                }
-            }
-            if (myPosition.getRow() == 2) {
-                if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN);
-                    possibleMoves.add(possibleMove);
-                    ChessMove possibleMove2 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK);
-                    possibleMoves.add(possibleMove2);
-                    ChessMove possibleMove3 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.KNIGHT);
-                    possibleMoves.add(possibleMove3);
-                    ChessMove possibleMove4 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.BISHOP);
-                    possibleMoves.add(possibleMove4);
-                }
-                ultimateCalculator(-1,1,2,ChessPiece.PieceType.QUEEN);
-                ultimateCalculator(-1,-1,2,ChessPiece.PieceType.QUEEN);
-                ultimateCalculator(-1,1,2,ChessPiece.PieceType.ROOK);
-                ultimateCalculator(-1,-1,2,ChessPiece.PieceType.ROOK);
-                ultimateCalculator(-1,1,2,ChessPiece.PieceType.KNIGHT);
-                ultimateCalculator(-1,-1,2,ChessPiece.PieceType.KNIGHT);
-                ultimateCalculator(-1,1,2,ChessPiece.PieceType.BISHOP);
-                ultimateCalculator(-1,-1,2,ChessPiece.PieceType.BISHOP);
-            } else {
-                if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
-                    ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
-                    possibleMoves.add(possibleMove);
-                }
-                ultimateCalculator(-1,1,2,null);
-                ultimateCalculator(-1,-1,2,null);
-            }
+            pawnHelper(2,7,1);
+        } else {
+            pawnHelper(7,2,-1);
         }
         return possibleMoves;
+
     }
 
+public void pawnHelper(int startRow, int backRow, int forward){
+    ChessPosition possiblePosition = new ChessPosition(myPosition.getRow() + forward, myPosition.getColumn());
+    if(myPosition.getRow() == startRow) {
+        ChessPosition possiblePosition2 = new ChessPosition(myPosition.getRow() + 2 * forward, myPosition.getColumn());
+        if (board.getPiece(possiblePosition) == null && board.getPiece(possiblePosition2) == null) {
+            ChessMove possibleMove = new ChessMove(myPosition, possiblePosition2, null);
+            possibleMoves.add(possibleMove);
+        }
+    }
+    if (myPosition.getRow() == backRow) {
+        if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
+            ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.QUEEN);
+            possibleMoves.add(possibleMove);
+            ChessMove possibleMove2 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.ROOK);
+            possibleMoves.add(possibleMove2);
+            ChessMove possibleMove3 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.KNIGHT);
+            possibleMoves.add(possibleMove3);
+            ChessMove possibleMove4 = new ChessMove(myPosition, possiblePosition, ChessPiece.PieceType.BISHOP);
+            possibleMoves.add(possibleMove4);
+        }
+        ultimateCalculator(forward,1,2,ChessPiece.PieceType.QUEEN);
+        ultimateCalculator(forward,-1,2,ChessPiece.PieceType.QUEEN);
+        ultimateCalculator(forward,1,2,ChessPiece.PieceType.ROOK);
+        ultimateCalculator(forward,-1,2,ChessPiece.PieceType.ROOK);
+        ultimateCalculator(forward,1,2,ChessPiece.PieceType.KNIGHT);
+        ultimateCalculator(forward,-1,2,ChessPiece.PieceType.KNIGHT);
+        ultimateCalculator(forward,1,2,ChessPiece.PieceType.BISHOP);
+        ultimateCalculator(forward,-1,2,ChessPiece.PieceType.BISHOP);
+    } else {
+        if (board.getPiece(possiblePosition) == null && !isOutOfBounds(possiblePosition)){
+            ChessMove possibleMove = new ChessMove(myPosition, possiblePosition, null);
+            possibleMoves.add(possibleMove);
+        }
+        ultimateCalculator(forward,1,2,null);
+        ultimateCalculator(forward,-1,2,null);
+    }
+}
 
     /**
      * Pawn logic

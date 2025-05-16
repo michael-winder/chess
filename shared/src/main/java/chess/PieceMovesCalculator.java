@@ -160,13 +160,4 @@ public void pawnHelper(int startRow, int backRow, int forward){
     }
 }
 
-    /**
-     * Pawn logic
-     * If enemy diagonal
-     * Can move diagonal
-     * If empty in front
-     * Can move 1 forward
-     * If on 2 or 7
-     * Can move 2 forward
-     */
 }

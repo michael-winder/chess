@@ -145,17 +145,19 @@ public class ChessGame {
             for (int col = 1; col < 9; col++){
                 ChessPosition piecePosition = new ChessPosition(row,col);
                 ChessPiece piece = board.getPiece(piecePosition);
-                // if the piece is not null and is the opposite color, the endPosition of each move is added to teamMoveDestinations
-                if (piece != null && piece.getTeamColor() == teamColor){
-                    Collection<ChessMove> teamMoves = piece.pieceMoves(board,piecePosition);
-                    for (ChessMove move : teamMoves){
-                        if (start == true){
-                            teamMovePositions.add(move.getStartPosition());
-                        } else {
+                // if the piece is null or is the incorrect color, skip over the part of the code that adds the piece
+                if (piece == null || piece.getTeamColor() != teamColor){
+                    continue;
+                }
+                Collection<ChessMove> teamMoves = piece.pieceMoves(board,piecePosition);
+                for (ChessMove move : teamMoves){
+                    if (start == true){
+                        teamMovePositions.add(move.getStartPosition());
+                    } else {
                             teamMovePositions.add(move.getEndPosition());
-                        }
                     }
                 }
+
             }
         }
         return teamMovePositions;
@@ -177,8 +179,9 @@ public class ChessGame {
                 allValidMoves.addAll(validMoves(position));
             }
             return allValidMoves.isEmpty();
+        } else {
+            return false;
         }
-        else return false;
     }
 
     /**

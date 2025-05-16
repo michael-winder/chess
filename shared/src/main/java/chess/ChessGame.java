@@ -26,7 +26,9 @@ public class ChessGame {
     public TeamColor getTeamTurn() {
         if (turnTracker % 2 == 1){
             return TeamColor.WHITE;
-        } else return TeamColor.BLACK;
+        } else {
+            return TeamColor.BLACK;
+        }
     }
 
     /**

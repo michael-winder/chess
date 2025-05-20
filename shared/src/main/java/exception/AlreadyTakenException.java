@@ -1,4 +1,4 @@
 package exception;
 
-public class AlreadyTakenException {
+public class AlreadyTakenException extends Throwable {
 }

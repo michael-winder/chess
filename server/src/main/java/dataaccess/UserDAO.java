@@ -1,7 +1,7 @@
 package dataaccess;
 
 import exception.AlreadyTakenException;
-import model.RegisterRequest;
+import requests.RegisterRequest;
 import model.UserData;
 
 public interface UserDAO {

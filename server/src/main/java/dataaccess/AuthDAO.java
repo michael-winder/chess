@@ -2,8 +2,6 @@ package dataaccess;
 
 import exception.AlreadyTakenException;
 import model.AuthData;
-import model.RegisterRequest;
-import model.UserData;
 
 import java.util.UUID;
 

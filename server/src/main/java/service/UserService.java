@@ -5,8 +5,9 @@ import dataaccess.AuthMemoryAccess;
 import dataaccess.UserDAO;
 import dataaccess.UserMemoryAccess;
 import exception.AlreadyTakenException;
-import model.RegisterRequest;
-import model.RegisterResponse;
+import exception.BadRequestException;
+import requests.RegisterRequest;
+import responses.RegisterResponse;
 
 public class UserService {
     private final UserDAO userAccess = new UserMemoryAccess();
@@ -17,9 +18,12 @@ public class UserService {
 //    }
 
 
-    public RegisterResponse register(RegisterRequest request) throws AlreadyTakenException {
+    public RegisterResponse register(RegisterRequest request) throws AlreadyTakenException, BadRequestException{
+        if (request.password() == null){
+            throw new BadRequestException(400, "Error: bad request");
+        }
         if (userAccess.getUser(request.username()) != null){
-            throw new AlreadyTakenException(403,"Username already taken");
+            throw new AlreadyTakenException(403,"Error: already taken");
         } else {
         userAccess.createUser(request);
         String authToken = authAccess.createAuth(request.username());

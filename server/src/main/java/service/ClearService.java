@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.*;
-import model.ClearResponse;
+import responses.ClearResponse;
 
 public class ClearService {
     private final UserDAO userAccess = new UserMemoryAccess();

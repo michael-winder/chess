@@ -1,9 +1,8 @@
 package server;
 
-import com.google.gson.Gson;
+import exception.BadRequestException;
 import handlers.ClearHandler;
-import model.RegisterRequest;
-import model.RegisterResponse;
+import handlers.ExceptionHandler;
 import service.UserService;
 import spark.*;
 import exception.AlreadyTakenException;
@@ -22,7 +21,8 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.post("/user",regHandler::registerUser);
         Spark.delete("/db",clearHandler::clearAll);
-        Spark.exception(AlreadyTakenException.class, this::exceptionHandler);
+        Spark.exception(AlreadyTakenException.class, ExceptionHandler::takenHandler);
+        Spark.exception(BadRequestException.class, ExceptionHandler::badRequestHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -35,10 +35,10 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private void exceptionHandler(AlreadyTakenException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
-        res.body(ex.toJson());
-    }
+//    private void exceptionHandler(AlreadyTakenException ex, Request req, Response res) {
+//        res.status(ex.StatusCode());
+//        res.body(ex.toJson());
+//    }
 
 //    public Object registerUser(Request req, Response res) throws AlreadyTakenException{
 //        var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);

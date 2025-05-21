@@ -8,4 +8,6 @@ public interface UserDAO {
     UserData getUser(String username) throws AlreadyTakenException;
 
     void createUser(RegisterRequest request);
+
+    void deleteAllUsers();
 }

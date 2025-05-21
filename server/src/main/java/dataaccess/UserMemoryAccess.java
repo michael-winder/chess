@@ -16,4 +16,8 @@ public class UserMemoryAccess implements UserDAO{
     public UserData getUser(String username){
         return allUsers.get(username);
     }
+
+    public void deleteAllUsers(){
+        allUsers.clear();
+    }
 }

@@ -1,18 +1,18 @@
 package server;
 
 import com.google.gson.Gson;
+import handlers.ClearHandler;
 import model.RegisterRequest;
 import model.RegisterResponse;
 import service.UserService;
 import spark.*;
-import exception.AlreadyTakenException
+import exception.AlreadyTakenException;
+import handlers.RegisterHandler;
 
 public class Server {
-    private final UserService userService;
-
-    public Server(UserService userService){
-        this.userService = userService;
-    }
+    private final UserService userService = new UserService();
+    private final RegisterHandler regHandler = new RegisterHandler();
+    private final ClearHandler clearHandler = new ClearHandler();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -20,7 +20,8 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.post("/user",this::registerUser);
+        Spark.post("/user",regHandler::registerUser);
+        Spark.delete("/db",clearHandler::clearAll);
         Spark.exception(AlreadyTakenException.class, this::exceptionHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -39,9 +40,9 @@ public class Server {
         res.body(ex.toJson());
     }
 
-    public Object registerUser(Request req, Response res){
-        var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-        RegisterResponse registerResponse = userService.register(registerRequest);
-        return new Gson().toJson(registerResponse);
-    }
+//    public Object registerUser(Request req, Response res) throws AlreadyTakenException{
+//        var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
+//        RegisterResponse registerResponse = userService.register(registerRequest);
+//        return new Gson().toJson(registerResponse);
+//    }
 }

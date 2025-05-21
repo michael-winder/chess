@@ -8,6 +8,7 @@ public class ClearService {
     private final AuthDAO authAccess = new AuthMemoryAccess();
     private final GameDAO gameAccess = new GameMemoryAccess();
 
+
     public ClearResponse clear(){
         userAccess.deleteAllUsers();
         authAccess.deleteAllAuth();

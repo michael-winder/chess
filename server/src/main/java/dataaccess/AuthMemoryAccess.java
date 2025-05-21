@@ -22,4 +22,8 @@ public class AuthMemoryAccess implements AuthDAO{
     public void deleteAllAuth(){
         allAuthData.clear();
     }
+
+    public void deleteAuth(String authToken){
+        allAuthData.remove(authToken);
+    }
 }

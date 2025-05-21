@@ -1,7 +1,9 @@
 package service;
 
+import dataaccess.*;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
+import exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requests.LoginRequest;
@@ -51,12 +53,12 @@ public class UserServiceTest {
     @Test
     void incorrectPassword() throws BadRequestException, AlreadyTakenException{
         registerUser("Michael","pass","email");
-        assertThrows(BadRequestException.class,()->loginUser("Michael","wrong"));
+        assertThrows(UnauthorizedException.class,()->loginUser("Michael","wrong"));
     }
 
     @Test
     void noAccount() throws BadRequestException{
-        assertThrows(BadRequestException.class,()->loginUser("Michael","wrong"));
+        assertThrows(UnauthorizedException.class,()->loginUser("Michael","wrong"));
     }
 
     @Test

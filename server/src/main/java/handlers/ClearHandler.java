@@ -1,10 +1,14 @@
 package handlers;
 
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import service.ClearService;
 import spark.Request;
 import spark.Response;
 
 public class ClearHandler {
+
     private final ClearService clearService = new ClearService();
 
     public Object clearAll(Request req, Response res){

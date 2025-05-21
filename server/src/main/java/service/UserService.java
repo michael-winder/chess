@@ -6,11 +6,14 @@ import dataaccess.UserDAO;
 import dataaccess.UserMemoryAccess;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
+import exception.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
 import requests.LoginRequest;
+import requests.LogoutRequest;
 import requests.RegisterRequest;
 import responses.LoginResponse;
+import responses.LogoutResponse;
 import responses.RegisterResponse;
 
 import java.util.Objects;
@@ -39,16 +42,29 @@ public class UserService {
 
     public LoginResponse login(LoginRequest r) throws BadRequestException{
         if (r.password() == null || r.username() == null){
-            throw new BadRequestException(400,"Error: unauthorized");
+            throw new BadRequestException(400,"Error: bad request");
         }
         UserData userData = userAccess.getUser(r.username());
         if (userData == null){
-            throw new BadRequestException(401,"Error: unauthorized");
+            throw new UnauthorizedException(401,"Error: unauthorized");
         } else if (!Objects.equals(userData.password(), r.password())){
-            throw new BadRequestException(400,"Error: bad request");
+            throw new UnauthorizedException(401,"Error: unauthorized");
         }
         String authToken = authAccess.createAuth(r.username());
         return new LoginResponse(r.username(),authToken);
+    }
+
+    public LogoutResponse logout(LogoutRequest r) throws UnauthorizedException{
+        if (r == null){
+            throw new UnauthorizedException(401,"Error: unauthorized");
+        }
+        AuthData authData = authAccess.getAuth(r.authToken());
+        if (authData == null){
+            throw new UnauthorizedException(401,"Error: unauthorized");
+        } else {
+            authAccess.deleteAuth(r.authToken());
+        }
+        return new LogoutResponse();
     }
 
 }

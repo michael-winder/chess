@@ -6,7 +6,7 @@ import model.AuthData;
 import java.util.UUID;
 
 public interface AuthDAO {
-    AuthData getAuth(String authToken) throws AlreadyTakenException;
+    AuthData getAuth(String authToken);
 
     String createAuth(String username);
 
@@ -15,4 +15,6 @@ public interface AuthDAO {
     }
 
     void deleteAllAuth();
+
+    void deleteAuth(String authToken);
 }

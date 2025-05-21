@@ -3,6 +3,7 @@ package server;
 import exception.BadRequestException;
 import handlers.ClearHandler;
 import handlers.ExceptionHandler;
+import handlers.LoginHandler;
 import service.UserService;
 import spark.*;
 import exception.AlreadyTakenException;
@@ -12,6 +13,7 @@ public class Server {
     private final UserService userService = new UserService();
     private final RegisterHandler regHandler = new RegisterHandler();
     private final ClearHandler clearHandler = new ClearHandler();
+    private final LoginHandler loginHandler = new LoginHandler();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -21,6 +23,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.post("/user",regHandler::registerUser);
         Spark.delete("/db",clearHandler::clearAll);
+ //       Spark.post("/session",loginHandler::loginUser);
         Spark.exception(AlreadyTakenException.class, ExceptionHandler::takenHandler);
         Spark.exception(BadRequestException.class, ExceptionHandler::badRequestHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 

@@ -1,5 +1,6 @@
 package server;
 
+import dataaccess.*;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
 import handlers.*;
@@ -9,11 +10,13 @@ import spark.*;
 import exception.AlreadyTakenException;
 
 public class Server {
-    private final UserService userService = new UserService();
-    private final RegisterHandler regHandler = new RegisterHandler();
-    private final ClearHandler clearHandler = new ClearHandler();
-    private final LoginHandler loginHandler = new LoginHandler();
-    private final LogoutHandler logoutHandler = new LogoutHandler();
+    private final UserDAO userAccess = new UserMemoryAccess();
+    private final AuthDAO authAccess = new AuthMemoryAccess();
+    private final GameDAO gameAccess = new GameMemoryAccess();
+    private final RegisterHandler regHandler = new RegisterHandler(userAccess, authAccess, gameAccess);
+    private final ClearHandler clearHandler = new ClearHandler(userAccess, authAccess, gameAccess);
+    private final LoginHandler loginHandler = new LoginHandler(userAccess, authAccess, gameAccess);
+    private final LogoutHandler logoutHandler = new LogoutHandler(userAccess, authAccess, gameAccess);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

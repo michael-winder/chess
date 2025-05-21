@@ -14,8 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 
 public class UserServiceTest {
-    static final UserService userService = new UserService();
-    static final ClearService clearService = new ClearService();
+    static final UserDAO userAccess = new UserMemoryAccess();
+    static final AuthDAO authAccess = new AuthMemoryAccess();
+    static final GameDAO gameAccess = new GameMemoryAccess();
+    static final UserService userService = new UserService(userAccess, authAccess, gameAccess);
+    static final ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
 
     @BeforeEach
     void startup(){

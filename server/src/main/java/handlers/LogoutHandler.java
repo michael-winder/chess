@@ -1,6 +1,9 @@
 package handlers;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
 import requests.LoginRequest;
@@ -12,7 +15,17 @@ import spark.Request;
 import spark.Response;
 
 public class LogoutHandler {
-    private final UserService userService = new UserService();
+    final UserDAO userAccess;
+    final AuthDAO authAccess;
+    final GameDAO gameAccess;
+    private final UserService userService;
+    public LogoutHandler(UserDAO userAccess, AuthDAO authAccess, GameDAO gameAccess){
+        this.userAccess = userAccess;
+        this.authAccess = authAccess;
+        this.gameAccess = gameAccess;
+        userService = new UserService(userAccess, authAccess, gameAccess);
+    }
+
 
     public String logoutUser(Request req, Response res) throws UnauthorizedException {
         var logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);

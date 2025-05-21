@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.AuthMemoryAccess;
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryAccess;
+import dataaccess.*;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
@@ -19,12 +16,15 @@ import responses.RegisterResponse;
 import java.util.Objects;
 
 public class UserService {
-    private final UserDAO userAccess = new UserMemoryAccess();
-    private final AuthDAO authAccess = new AuthMemoryAccess();
+    private final UserDAO userAccess ;
+    private final AuthDAO authAccess;
+    private final GameDAO gameAccess;
 
-//    public UserService(UserDAO userAccess,AuthDAO authAccess){
-//        this.userAccess = userAccess;
-//    }
+    public UserService(UserDAO userAccess, AuthDAO authAccess, GameDAO gameAccess){
+        this.userAccess = userAccess;
+        this.authAccess = authAccess;
+        this.gameAccess = gameAccess;
+    }
 
 
     public RegisterResponse register(RegisterRequest request) throws AlreadyTakenException, BadRequestException{

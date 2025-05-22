@@ -34,4 +34,9 @@ public class GameMemoryAccess implements GameDAO{
         gameList.addAll(allGameData.values());
         return gameList;
     }
+
+    public void updateGame(GameData gameData){
+        allGameData.remove(gameData.gameID());
+        allGameData.put(gameData.gameID(), gameData);
+    }
 }

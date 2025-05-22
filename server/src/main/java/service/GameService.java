@@ -4,10 +4,15 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
+import model.AuthData;
+import model.GameData;
 import requests.CreateRequest;
+import requests.JoinRequest;
 import responses.CreateResponse;
+import responses.JoinResponse;
 import responses.ListResponse;
 
 public class GameService {
@@ -38,6 +43,31 @@ public class GameService {
         return new ListResponse(gameAccess.listGames());
     }
 
-
+    public JoinResponse join(JoinRequest request, String authToken) throws UnauthorizedException, BadRequestException, AlreadyTakenException{
+        if (authAccess.getAuth(authToken) == null){
+            throw new UnauthorizedException(401, "Error: unauthorized");
+        }
+        if (request.color() == null || request.gameID() == null || gameAccess.getGame(request.gameID()) == null){
+            throw new BadRequestException(400, "Error: bad request");
+        }
+        GameData gameData = gameAccess.getGame(request.gameID());
+        AuthData authData = authAccess.getAuth(authToken);
+        GameData newGameData;
+        if (request.color() == ChessGame.TeamColor.BLACK){
+            if (gameData.blackUsername() != null){
+                throw new AlreadyTakenException(403, "Error: already taken");
+            } else {
+                newGameData = new GameData(request.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
+            }
+        } else {
+            if (gameData.whiteUsername() != null){
+                throw new AlreadyTakenException(403, "Error: already taken");
+            } else {
+                newGameData = new GameData(request.gameID(), authData.username(), gameData.blackUsername() , gameData.gameName(), gameData.game());
+            }
+        }
+        gameAccess.updateGame(newGameData);
+        return new JoinResponse();
+    }
 }
 

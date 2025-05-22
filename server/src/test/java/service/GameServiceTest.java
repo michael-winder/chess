@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
@@ -7,12 +8,10 @@ import exception.UnauthorizedException;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import requests.JoinRequest;
 import responses.CreateResponse;
 import responses.ListResponse;
 import responses.RegisterResponse;
-
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -66,5 +65,23 @@ public class GameServiceTest {
         CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(), "game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(), "game2");
         assertThrows(UnauthorizedException.class, () -> gameService.list(null));
+    }
+
+    @Test
+    void joinSuccess() throws AlreadyTakenException{
+        RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
+        CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
+        JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());
+        gameService.join(joinRequest, registerResponse.authToken());
+        assertEquals("Michael", gameAccess.getGame(createResponse.gameID()).blackUsername());
+    }
+
+    @Test
+    void joinColorTaken() throws AlreadyTakenException{
+        RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
+        CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
+        JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());
+        gameService.join(joinRequest, registerResponse.authToken());
+        assertThrows(AlreadyTakenException.class, () -> gameService.join(joinRequest, registerResponse.authToken()));
     }
 }

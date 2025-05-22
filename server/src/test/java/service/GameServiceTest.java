@@ -19,7 +19,6 @@ public class GameServiceTest {
     static final UserDAO userAccess = new UserMemoryAccess();
     static final AuthDAO authAccess = new AuthMemoryAccess();
     static final GameDAO gameAccess = new GameMemoryAccess();
-    static final UserService userService = new UserService(userAccess, authAccess, gameAccess);
     static final ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
     static final GameService gameService = new GameService(userAccess, authAccess, gameAccess);
     TestHelperMethods methods = new TestHelperMethods(userAccess, authAccess, gameAccess);
@@ -56,7 +55,7 @@ public class GameServiceTest {
         GameData game1 = gameAccess.getGame(createResponse1.gameID());
         GameData game2 = gameAccess.getGame(createResponse2.gameID());
         ListResponse listResponse = gameService.list(registerResponse.authToken());
-        assertTrue(listResponse.gameList().contains(game1) && listResponse.gameList().contains(game2));
+        assertTrue(listResponse.games().contains(game1) && listResponse.games().contains(game2));
     }
 
     @Test

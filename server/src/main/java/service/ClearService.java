@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.*;
-import responses.ClearResponse;
 
 public class ClearService {
     private final UserDAO userAccess ;
@@ -14,10 +13,12 @@ public class ClearService {
     }
 
 
-    public ClearResponse clear(){
+    public String clear(){
         userAccess.deleteAllUsers();
         authAccess.deleteAllAuth();
         gameAccess.deleteAllGames();
-        return new ClearResponse();
+        return "{}";
     }
+
+
 }

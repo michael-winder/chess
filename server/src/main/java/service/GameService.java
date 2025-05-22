@@ -16,11 +16,9 @@ import responses.JoinResponse;
 import responses.ListResponse;
 
 public class GameService {
-    private final UserDAO userAccess ;
     private final AuthDAO authAccess;
     private final GameDAO gameAccess;
     public GameService (UserDAO userAccess, AuthDAO authAccess, GameDAO gameAccess){
-        this.userAccess = userAccess;
         this.authAccess = authAccess;
         this.gameAccess = gameAccess;
     }
@@ -47,19 +45,19 @@ public class GameService {
         if (authAccess.getAuth(authToken) == null){
             throw new UnauthorizedException(401, "Error: unauthorized");
         }
-        if (request.color() == null || request.gameID() == null || gameAccess.getGame(request.gameID()) == null){
+        if (request.playerColor() == null || request.gameID() == null || gameAccess.getGame(request.gameID()) == null){
             throw new BadRequestException(400, "Error: bad request");
         }
         GameData gameData = gameAccess.getGame(request.gameID());
         AuthData authData = authAccess.getAuth(authToken);
-        GameData newGameData;
-        if (request.color() == ChessGame.TeamColor.BLACK){
+        GameData newGameData = gameData;
+        if (request.playerColor() == ChessGame.TeamColor.BLACK){
             if (gameData.blackUsername() != null){
                 throw new AlreadyTakenException(403, "Error: already taken");
             } else {
                 newGameData = new GameData(request.gameID(), gameData.whiteUsername(), authData.username(), gameData.gameName(), gameData.game());
             }
-        } else {
+        } else if (request.playerColor() == ChessGame.TeamColor.WHITE) {
             if (gameData.whiteUsername() != null){
                 throw new AlreadyTakenException(403, "Error: already taken");
             } else {

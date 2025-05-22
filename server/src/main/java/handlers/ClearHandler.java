@@ -1,12 +1,15 @@
 package handlers;
 
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.GameData;
+import responses.ClearResponse;
 import service.ClearService;
-import service.UserService;
 import spark.Request;
 import spark.Response;
+import java.util.ArrayList;
 
 public class ClearHandler {
     final UserDAO userAccess;
@@ -22,6 +25,7 @@ public class ClearHandler {
 
     public Object clearAll(Request req, Response res){
         clearService.clear();
-        return "{}";
+        ClearResponse response = new ClearResponse(new ArrayList<>());
+        return new Gson().toJson(response);
     }
 }

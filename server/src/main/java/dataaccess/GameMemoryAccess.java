@@ -22,4 +22,8 @@ public class GameMemoryAccess implements GameDAO{
     public int generateGameID(){
         return gameID++;
     }
+
+    public GameData getGame(int gameID){
+        return allGameData.get(gameID);
+    }
 }

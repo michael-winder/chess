@@ -12,10 +12,11 @@ public class GameMemoryAccess implements GameDAO{
         allGameData.clear();
     }
 
-    public void createGame(String whiteUsername, String blackUsername, String gameName, chess.ChessGame chessGame){
+    public int createGame(String whiteUsername, String blackUsername, String gameName, chess.ChessGame chessGame){
         Integer gameID = (Integer) generateGameID();
         GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
         allGameData.put(gameID, game);
+        return gameID;
     }
 
     public int generateGameID(){

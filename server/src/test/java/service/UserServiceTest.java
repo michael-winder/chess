@@ -7,8 +7,10 @@ import exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requests.LoginRequest;
+import requests.LogoutRequest;
 import requests.RegisterRequest;
 import responses.LoginResponse;
+import responses.LogoutResponse;
 import responses.RegisterResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
@@ -69,7 +71,31 @@ public class UserServiceTest {
         assertThrows(BadRequestException.class,()->loginUser(null,"wrong"));
     }
 
-    private RegisterResponse registerUser (String username, String password, String email) throws AlreadyTakenException{
+    @Test
+    void logoutSuccess() throws UnauthorizedException, AlreadyTakenException{
+        RegisterResponse registerResponse = registerUser("Michael","pass","email");
+        loginUser("Michael","pass");
+        String authToken = registerResponse.authToken();
+        logoutUser(authToken);
+        assertNull(authAccess.getAuth(authToken));
+    }
+
+    @Test
+    void tokenNotExist() throws UnauthorizedException, AlreadyTakenException{
+        RegisterResponse registerResponse = registerUser("Michael","pass","email");
+        loginUser("Michael","pass");
+        assertThrows(UnauthorizedException.class, () -> logoutUser("wrongToken"));
+    }
+
+    @Test
+    void nullRequest() throws UnauthorizedException, AlreadyTakenException{
+        RegisterResponse registerResponse = registerUser("Michael","pass","email");
+        loginUser("Michael","pass");
+        LogoutRequest request = null;
+        assertThrows(UnauthorizedException.class, () -> userService.logout(request));
+    }
+
+    private RegisterResponse registerUser(String username, String password, String email) throws AlreadyTakenException{
         RegisterRequest request = new RegisterRequest(username,password,email);
         return userService.register(request);
     }
@@ -77,5 +103,10 @@ public class UserServiceTest {
     private LoginResponse loginUser(String username, String password){
         LoginRequest request = new LoginRequest(username,password);
         return userService.login(request);
+    }
+
+    private LogoutResponse logoutUser(String authToken){
+        LogoutRequest request = new LogoutRequest(authToken);
+        return userService.logout(request);
     }
 }

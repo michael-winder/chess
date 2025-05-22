@@ -28,7 +28,8 @@ public class LogoutHandler {
 
 
     public String logoutUser(Request req, Response res) throws UnauthorizedException {
-        var logoutRequest = new Gson().fromJson(req.body(), LogoutRequest.class);
+        String authToken = req.headers("authorization");
+        LogoutRequest logoutRequest = new LogoutRequest(authToken);
         LogoutResponse response = userService.logout(logoutRequest);
         return new Gson().toJson(response);
     }

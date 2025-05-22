@@ -16,23 +16,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class GameServiceTest {
-    static final UserDAO UserAccess = new UserMemoryAccess();
-    static final AuthDAO AuthAccess = new AuthMemoryAccess();
-    static final GameDAO GameAccess = new GameMemoryAccess();
-    static final ClearService ClearService = new ClearService(UserAccess, AuthAccess, GameAccess);
-    static final GameService GameService = new GameService(UserAccess, AuthAccess, GameAccess);
-    TestHelperMethods methods = new TestHelperMethods(UserAccess, AuthAccess, GameAccess);
+    static final UserDAO USER_ACCESS = new UserMemoryAccess();
+    static final AuthDAO AUTH_ACCESS = new AuthMemoryAccess();
+    static final GameDAO GAME_ACCESS = new GameMemoryAccess();
+    static final ClearService CLEAR_SERVICE = new ClearService(USER_ACCESS, AUTH_ACCESS, GAME_ACCESS);
+    static final GameService GAME_SERVICE = new GameService(USER_ACCESS, AUTH_ACCESS, GAME_ACCESS);
+    TestHelperMethods methods = new TestHelperMethods(USER_ACCESS, AUTH_ACCESS, GAME_ACCESS);
 
     @BeforeEach
     void startup(){
-        ClearService.clear();
+        CLEAR_SERVICE.clear();
     }
 
     @Test
     void createGame() throws AlreadyTakenException {
         RegisterResponse regResponse = methods.registerUser("Michael","pass","email");
         CreateResponse createResponse = methods.createGame(regResponse.authToken(), "MyGame");
-        assertNotNull(GameAccess.getGame(createResponse.gameID()));
+        assertNotNull(GAME_ACCESS.getGame(createResponse.gameID()));
     }
 
     @Test
@@ -52,9 +52,9 @@ public class GameServiceTest {
         RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
         CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(),"game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(),"game2");
-        GameData game1 = GameAccess.getGame(createResponse1.gameID());
-        GameData game2 = GameAccess.getGame(createResponse2.gameID());
-        ListResponse listResponse = GameService.list(registerResponse.authToken());
+        GameData game1 = GAME_ACCESS.getGame(createResponse1.gameID());
+        GameData game2 = GAME_ACCESS.getGame(createResponse2.gameID());
+        ListResponse listResponse = GAME_SERVICE.list(registerResponse.authToken());
         assertTrue(listResponse.games().contains(game1) && listResponse.games().contains(game2));
     }
 
@@ -63,7 +63,7 @@ public class GameServiceTest {
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(), "game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(), "game2");
-        assertThrows(UnauthorizedException.class, () -> GameService.list(null));
+        assertThrows(UnauthorizedException.class, () -> GAME_SERVICE.list(null));
     }
 
     @Test
@@ -71,8 +71,8 @@ public class GameServiceTest {
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
         JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());
-        GameService.join(joinRequest, registerResponse.authToken());
-        assertEquals("Michael", GameAccess.getGame(createResponse.gameID()).blackUsername());
+        GAME_SERVICE.join(joinRequest, registerResponse.authToken());
+        assertEquals("Michael", GAME_ACCESS.getGame(createResponse.gameID()).blackUsername());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class GameServiceTest {
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
         JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());
-        GameService.join(joinRequest, registerResponse.authToken());
-        assertThrows(AlreadyTakenException.class, () -> GameService.join(joinRequest, registerResponse.authToken()));
+        GAME_SERVICE.join(joinRequest, registerResponse.authToken());
+        assertThrows(AlreadyTakenException.class, () -> GAME_SERVICE.join(joinRequest, registerResponse.authToken()));
     }
 }

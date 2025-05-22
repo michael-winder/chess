@@ -12,21 +12,21 @@ import responses.RegisterResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
-    static final UserDAO userAccess = new UserMemoryAccess();
-    static final AuthDAO authAccess = new AuthMemoryAccess();
-    static final GameDAO gameAccess = new GameMemoryAccess();
-    static final UserService userService = new UserService(userAccess, authAccess, gameAccess);
-    static final ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
-    static final TestHelperMethods methods = new TestHelperMethods(userAccess, authAccess, gameAccess);
+    static final UserDAO UserAccess = new UserMemoryAccess();
+    static final AuthDAO AuthAccess = new AuthMemoryAccess();
+    static final GameDAO GameAccess = new GameMemoryAccess();
+    static final UserService UserService = new UserService(UserAccess, AuthAccess, GameAccess);
+    static final ClearService ClearService = new ClearService(UserAccess, AuthAccess, GameAccess);
+    static final TestHelperMethods Methods = new TestHelperMethods(UserAccess, AuthAccess, GameAccess);
     @BeforeEach
     void startup(){
-        clearService.clear();
+        ClearService.clear();
     }
 
     @Test
     void registerUser() throws AlreadyTakenException, BadRequestException {
         String username = "Michael";
-        RegisterResponse actual = methods.registerUser(username,"pass","mail");
+        RegisterResponse actual = Methods.registerUser(username,"pass","mail");
         assertEquals(username,actual.username());
         assertNotNull(actual.authToken());
     }
@@ -34,60 +34,60 @@ public class UserServiceTest {
     @Test
     void userTakenException() throws AlreadyTakenException, BadRequestException{
         String username = "user";
-        RegisterResponse response1 = methods.registerUser(username,"pass","email");
-        assertThrows(AlreadyTakenException.class,() -> methods.registerUser(username,"pass","email"));
+        RegisterResponse response1 = Methods.registerUser(username,"pass","email");
+        assertThrows(AlreadyTakenException.class,() -> Methods.registerUser(username,"pass","email"));
     }
 
     @Test
     void badRequestException() throws AlreadyTakenException, BadRequestException{
-        assertThrows(BadRequestException.class,() -> methods.registerUser("user",null,"email"));
+        assertThrows(BadRequestException.class,() -> Methods.registerUser("user",null,"email"));
     }
 
     @Test
     void loginRequest() throws BadRequestException, AlreadyTakenException{
-        methods.registerUser("Michael","pass","email");
-        LoginResponse response = methods.loginUser("Michael","pass");
+        Methods.registerUser("Michael","pass","email");
+        LoginResponse response = Methods.loginUser("Michael","pass");
         assertEquals("Michael",response.username());
         assertNotNull(response.authToken());
     }
 
     @Test
     void incorrectPassword() throws BadRequestException, AlreadyTakenException{
-        methods.registerUser("Michael","pass","email");
-        assertThrows(UnauthorizedException.class, () -> methods.loginUser("Michael","wrong"));
+        Methods.registerUser("Michael","pass","email");
+        assertThrows(UnauthorizedException.class, () -> Methods.loginUser("Michael","wrong"));
     }
 
     @Test
     void noAccount() throws BadRequestException{
-        assertThrows(UnauthorizedException.class, () -> methods.loginUser("Michael","wrong"));
+        assertThrows(UnauthorizedException.class, () -> Methods.loginUser("Michael","wrong"));
     }
 
     @Test
     void noUsername() throws BadRequestException{
-        assertThrows(BadRequestException.class, () -> methods.loginUser(null,"wrong"));
+        assertThrows(BadRequestException.class, () -> Methods.loginUser(null,"wrong"));
     }
 
     @Test
     void logoutSuccess() throws UnauthorizedException, AlreadyTakenException{
-        RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
-        methods.loginUser("Michael","pass");
+        RegisterResponse registerResponse = Methods.registerUser("Michael","pass","email");
+        Methods.loginUser("Michael","pass");
         String authToken = registerResponse.authToken();
-        methods.logoutUser(authToken);
-        assertNull(authAccess.getAuth(authToken));
+        Methods.logoutUser(authToken);
+        assertNull(AuthAccess.getAuth(authToken));
     }
 
     @Test
     void tokenNotExist() throws UnauthorizedException, AlreadyTakenException{
-        RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
-        methods.loginUser("Michael","pass");
-        assertThrows(UnauthorizedException.class, () -> methods.logoutUser("wrongToken"));
+        RegisterResponse registerResponse = Methods.registerUser("Michael","pass","email");
+        Methods.loginUser("Michael","pass");
+        assertThrows(UnauthorizedException.class, () -> Methods.logoutUser("wrongToken"));
     }
 
     @Test
     void nullRequest() throws UnauthorizedException, AlreadyTakenException{
-        RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
-        methods.loginUser("Michael","pass");
+        RegisterResponse registerResponse = Methods.registerUser("Michael","pass","email");
+        Methods.loginUser("Michael","pass");
         LogoutRequest request = null;
-        assertThrows(UnauthorizedException.class, () -> userService.logout(request));
+        assertThrows(UnauthorizedException.class, () -> UserService.logout(request));
     }
 }

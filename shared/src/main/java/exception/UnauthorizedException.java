@@ -16,7 +16,7 @@ public class UnauthorizedException extends RuntimeException {
         return new Gson().toJson(Map.of("message", getMessage(), "status", statusCode));
     }
 
-    public int StatusCode() {
+    public int statusCode() {
         return statusCode;
     }
 }

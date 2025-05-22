@@ -49,15 +49,4 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-
-//    private void exceptionHandler(AlreadyTakenException ex, Request req, Response res) {
-//        res.status(ex.StatusCode());
-//        res.body(ex.toJson());
-//    }
-
-//    public Object registerUser(Request req, Response res) throws AlreadyTakenException{
-//        var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
-//        RegisterResponse registerResponse = userService.register(registerRequest);
-//        return new Gson().toJson(registerResponse);
-//    }
 }

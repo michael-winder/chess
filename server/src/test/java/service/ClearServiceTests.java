@@ -10,15 +10,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ClearServiceTests {
-    static final UserDAO userAccess = new UserMemoryAccess();
-    static final AuthDAO authAccess = new AuthMemoryAccess();
-    static final GameDAO gameAccess = new GameMemoryAccess();
-    static final ClearService clearService = new ClearService(userAccess, authAccess, gameAccess);
-    TestHelperMethods methods = new TestHelperMethods(userAccess, authAccess, gameAccess);
+    static final UserDAO UserAccess = new UserMemoryAccess();
+    static final AuthDAO AuthAccess = new AuthMemoryAccess();
+    static final GameDAO GameAccess = new GameMemoryAccess();
+    static final ClearService ClearService = new ClearService(UserAccess, AuthAccess, GameAccess);
+    TestHelperMethods methods = new TestHelperMethods(UserAccess, AuthAccess, GameAccess);
 
     @BeforeEach
     void startup(){
-        clearService.clear();
+        ClearService.clear();
     }
 
     @Test
@@ -27,9 +27,9 @@ public class ClearServiceTests {
         RegisterResponse registerResponse2 = methods.registerUser("Michael2","pass","email");
         CreateResponse createResponse1 = methods.createGame(registerResponse1.authToken(),"game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse2.authToken(),"game1");
-        clearService.clear();
-        assertTrue(userAccess.getUser("Michael") == null && userAccess.getUser("Michael2") == null);
-        assertTrue(authAccess.getAuth(registerResponse1.authToken()) == null && authAccess.getAuth(registerResponse2.authToken()) == null);
-        assertTrue(gameAccess.listGames().isEmpty());
+        ClearService.clear();
+        assertTrue(UserAccess.getUser("Michael") == null && UserAccess.getUser("Michael2") == null);
+        assertTrue(AuthAccess.getAuth(registerResponse1.authToken()) == null && AuthAccess.getAuth(registerResponse2.authToken()) == null);
+        assertTrue(GameAccess.listGames().isEmpty());
     }
 }

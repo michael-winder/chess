@@ -18,6 +18,8 @@ public class Server {
     private final LoginHandler loginHandler = new LoginHandler(userAccess, authAccess, gameAccess);
     private final LogoutHandler logoutHandler = new LogoutHandler(userAccess, authAccess, gameAccess);
     private final CreateHandler createHandler = new CreateHandler(userAccess, authAccess, gameAccess);
+    private final ListHandler listHandler = new ListHandler(userAccess, authAccess, gameAccess);
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -30,6 +32,7 @@ public class Server {
         Spark.post("/session", loginHandler::loginUser);
         Spark.delete("/session", logoutHandler::logoutUser);
         Spark.post("/game", createHandler::createGame);
+        Spark.get("/game", listHandler::listGames);
         Spark.exception(AlreadyTakenException.class, ExceptionHandler::takenHandler);
         Spark.exception(BadRequestException.class, ExceptionHandler::badRequestHandler);
         Spark.exception(UnauthorizedException.class, ExceptionHandler::unauthorizedHandler);

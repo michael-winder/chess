@@ -4,10 +4,15 @@ import dataaccess.*;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
+import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import responses.CreateResponse;
+import responses.ListResponse;
 import responses.RegisterResponse;
+
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -42,5 +47,24 @@ public class GameServiceTest {
     void createWithNullName() throws BadRequestException, AlreadyTakenException {
         RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
         assertThrows(BadRequestException.class, () -> methods.createGame(registerResponse.authToken(),null));
+    }
+
+    @Test
+    void listSuccess() throws UnauthorizedException, AlreadyTakenException {
+        RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
+        CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(),"game1");
+        CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(),"game2");
+        GameData game1 = gameAccess.getGame(createResponse1.gameID());
+        GameData game2 = gameAccess.getGame(createResponse2.gameID());
+        ListResponse listResponse = gameService.list(registerResponse.authToken());
+        assertTrue(listResponse.gameList().contains(game1) && listResponse.gameList().contains(game2));
+    }
+
+    @Test
+    void listException() throws UnauthorizedException, AlreadyTakenException {
+        RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
+        CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(), "game1");
+        CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(), "game2");
+        assertThrows(UnauthorizedException.class, () -> gameService.list(null));
     }
 }

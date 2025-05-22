@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class GameMemoryAccess implements GameDAO{
@@ -25,5 +27,11 @@ public class GameMemoryAccess implements GameDAO{
 
     public GameData getGame(int gameID){
         return allGameData.get(gameID);
+    }
+
+    public ArrayList<GameData> listGames(){
+        ArrayList<GameData> gameList = new ArrayList<>();
+        gameList.addAll(allGameData.values());
+        return gameList;
     }
 }

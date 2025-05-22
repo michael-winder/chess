@@ -8,6 +8,7 @@ import exception.BadRequestException;
 import exception.UnauthorizedException;
 import requests.CreateRequest;
 import responses.CreateResponse;
+import responses.ListResponse;
 
 public class GameService {
     private final UserDAO userAccess ;
@@ -28,6 +29,13 @@ public class GameService {
         }
         int gameID = gameAccess.createGame(null,null, request.gameName(), new ChessGame());
         return new CreateResponse(gameID);
+    }
+
+    public ListResponse list(String authToken){
+        if (authAccess.getAuth(authToken) == null){
+            throw new UnauthorizedException(401, "Error: unauthorized");
+        }
+        return new ListResponse(gameAccess.listGames());
     }
 
 

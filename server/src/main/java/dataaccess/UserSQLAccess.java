@@ -14,11 +14,11 @@ import static java.sql.Types.NULL;
 
 public class UserSQLAccess implements UserDAO{
 
-    public UserSQLAccess() throws ResponseException, DataAccessException{
+    public UserSQLAccess() throws DataAccessException{
         configureDatabase();
     }
 
-    public void createUser(RegisterRequest request){
+    public void createUser(RegisterRequest request) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES (?,?, ?)")){
                 preparedStatement.setString(1, request.username());
@@ -26,13 +26,13 @@ public class UserSQLAccess implements UserDAO{
                 preparedStatement.setString(3, request.email());
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException | DataAccessException e) {
-            //throw new DataAccessException("Unable to create user", e);
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create user", e);
         }
     }
 
 
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement("SELECT password, email FROM user WHERE username=?")){
                 preparedStatement.setString(1,username);
@@ -46,18 +46,17 @@ public class UserSQLAccess implements UserDAO{
                     }
                 }
             }
-        } catch (SQLException | DataAccessException e) {
-//            throw new DataAccessException("Unable to create user", e);
+        } catch (SQLException e) {
+            throw new DataAccessException("Unable to create user", e);
         }
-        return null;
     }
 
-    public void deleteAllUsers() {
+    public void deleteAllUsers() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
             var ps = conn.prepareStatement("TRUNCATE TABLE user");
             ps.executeUpdate();
-        } catch (SQLException | DataAccessException e) {
-           // throw new DataAccessException("Unable to create user", e);
+        } catch (SQLException e) {
+           throw new DataAccessException("Unable to create user", e);
         }
     }
 
@@ -74,7 +73,7 @@ public class UserSQLAccess implements UserDAO{
     };
 
 
-    private void configureDatabase() throws ResponseException, DataAccessException {
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()){
             for (var statement : createStatements){
@@ -82,8 +81,8 @@ public class UserSQLAccess implements UserDAO{
                     preparedStatement.executeUpdate();
                 }
             }
-        } catch (SQLException| DataAccessException ex){
-            throw new ResponseException(500, "Unable to configure database");
+        } catch (SQLException ex){
+            throw new DataAccessException("unable to configure Database");
         }
 
     }

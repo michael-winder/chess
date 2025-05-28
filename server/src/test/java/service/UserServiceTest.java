@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import requests.LogoutRequest;
 import responses.LoginResponse;
 import responses.RegisterResponse;
+
+import javax.xml.crypto.Data;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
@@ -19,12 +22,12 @@ public class UserServiceTest {
     static final ClearService CLEAR_SERVICE = new ClearService(USER_ACESS, AUTH_ACCESS, GAME_ACCESS);
     static final TestHelperMethods METHODS = new TestHelperMethods(USER_ACESS, AUTH_ACCESS, GAME_ACCESS);
     @BeforeEach
-    void startup(){
+    void startup() throws DataAccessException{
         CLEAR_SERVICE.clear();
     }
 
     @Test
-    void registerUser() throws AlreadyTakenException, BadRequestException {
+    void registerUser() throws AlreadyTakenException, BadRequestException, DataAccessException {
         String username = "Michael";
         RegisterResponse actual = METHODS.registerUser(username,"pass","mail");
         assertEquals(username,actual.username());
@@ -32,19 +35,19 @@ public class UserServiceTest {
     }
 
     @Test
-    void userTakenException() throws AlreadyTakenException, BadRequestException{
+    void userTakenException() throws AlreadyTakenException, BadRequestException, DataAccessException{
         String username = "user";
         RegisterResponse response1 = METHODS.registerUser(username,"pass","email");
         assertThrows(AlreadyTakenException.class,() -> METHODS.registerUser(username,"pass","email"));
     }
 
     @Test
-    void badRequestException() throws AlreadyTakenException, BadRequestException{
+    void badRequestException() throws AlreadyTakenException, BadRequestException, DataAccessException{
         assertThrows(BadRequestException.class,() -> METHODS.registerUser("user",null,"email"));
     }
 
     @Test
-    void loginRequest() throws BadRequestException, AlreadyTakenException{
+    void loginRequest() throws BadRequestException, AlreadyTakenException, DataAccessException {
         METHODS.registerUser("Michael","pass","email");
         LoginResponse response = METHODS.loginUser("Michael","pass");
         assertEquals("Michael",response.username());
@@ -52,23 +55,23 @@ public class UserServiceTest {
     }
 
     @Test
-    void incorrectPassword() throws BadRequestException, AlreadyTakenException{
+    void incorrectPassword() throws BadRequestException, AlreadyTakenException, DataAccessException{
         METHODS.registerUser("Michael","pass","email");
         assertThrows(UnauthorizedException.class, () -> METHODS.loginUser("Michael","wrong"));
     }
 
     @Test
-    void noAccount() throws BadRequestException{
+    void noAccount() throws BadRequestException, DataAccessException{
         assertThrows(UnauthorizedException.class, () -> METHODS.loginUser("Michael","wrong"));
     }
 
     @Test
-    void noUsername() throws BadRequestException{
+    void noUsername() throws BadRequestException, DataAccessException{
         assertThrows(BadRequestException.class, () -> METHODS.loginUser(null,"wrong"));
     }
 
     @Test
-    void logoutSuccess() throws UnauthorizedException, AlreadyTakenException{
+    void logoutSuccess() throws UnauthorizedException, AlreadyTakenException, DataAccessException{
         RegisterResponse registerResponse = METHODS.registerUser("Michael","pass","email");
         METHODS.loginUser("Michael","pass");
         String authToken = registerResponse.authToken();
@@ -77,14 +80,14 @@ public class UserServiceTest {
     }
 
     @Test
-    void tokenNotExist() throws UnauthorizedException, AlreadyTakenException{
+    void tokenNotExist() throws UnauthorizedException, AlreadyTakenException, DataAccessException{
         RegisterResponse registerResponse = METHODS.registerUser("Michael","pass","email");
         METHODS.loginUser("Michael","pass");
         assertThrows(UnauthorizedException.class, () -> METHODS.logoutUser("wrongToken"));
     }
 
     @Test
-    void nullRequest() throws UnauthorizedException, AlreadyTakenException{
+    void nullRequest() throws UnauthorizedException, AlreadyTakenException, DataAccessException{
         RegisterResponse registerResponse = METHODS.registerUser("Michael","pass","email");
         METHODS.loginUser("Michael","pass");
         LogoutRequest request = null;

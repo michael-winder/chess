@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.GameData;
@@ -23,7 +24,7 @@ public class ClearHandler {
         clearService = new ClearService(userAccess, authAccess, gameAccess);
     }
 
-    public Object clearAll(Request req, Response res){
+    public Object clearAll(Request req, Response res) throws DataAccessException {
         clearService.clear();
         ClearResponse response = new ClearResponse(new ArrayList<>());
         return new Gson().toJson(response);

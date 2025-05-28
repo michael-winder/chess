@@ -28,12 +28,12 @@ public class TestHelperMethods {
     }
 
 
-    public RegisterResponse registerUser(String username, String password, String email) throws AlreadyTakenException {
+    public RegisterResponse registerUser(String username, String password, String email) throws AlreadyTakenException, DataAccessException {
         RegisterRequest request = new RegisterRequest(username,password,email);
         return userService.register(request);
     }
 
-    public LoginResponse loginUser(String username, String password){
+    public LoginResponse loginUser(String username, String password) throws DataAccessException{
         LoginRequest request = new LoginRequest(username,password);
         return userService.login(request);
     }

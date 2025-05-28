@@ -24,7 +24,7 @@ public class LoginHandler {
         userService = new UserService(userAccess, authAccess, gameAccess);
     }
 
-    public String loginUser(Request req, Response res) throws BadRequestException{
+    public String loginUser(Request req, Response res) throws BadRequestException, DataAccessException{
         var loginRequest = new Gson().fromJson(req.body(), LoginRequest.class);
         LoginResponse response = userService.login(loginRequest);
         return new Gson().toJson(response);

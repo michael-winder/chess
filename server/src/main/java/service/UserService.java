@@ -20,14 +20,14 @@ public class UserService {
     private final AuthDAO authAccess;
     private final GameDAO gameAccess;
 
-    public UserService(UserDAO userAccess, AuthDAO authAccess, GameDAO gameAccess){
+    public UserService(UserDAO userAccess, AuthDAO authAccess, GameDAO gameAccess) {
         this.userAccess = userAccess;
         this.authAccess = authAccess;
         this.gameAccess = gameAccess;
     }
 
 
-    public RegisterResponse register(RegisterRequest request) throws AlreadyTakenException, BadRequestException{
+    public RegisterResponse register(RegisterRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException{
         if (request.password() == null){
             throw new BadRequestException(400, "Error: bad request");
         }
@@ -40,7 +40,7 @@ public class UserService {
         }
     }
 
-    public LoginResponse login(LoginRequest r) throws BadRequestException{
+    public LoginResponse login(LoginRequest r) throws BadRequestException, DataAccessException{
         if (r.password() == null || r.username() == null){
             throw new BadRequestException(400,"Error: bad request");
         }

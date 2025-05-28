@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.*;
 import exception.BadRequestException;
+import exception.ResponseException;
 import exception.UnauthorizedException;
 import handlers.*;
 import handlers.ExceptionHandler;
@@ -10,17 +11,32 @@ import spark.*;
 import exception.AlreadyTakenException;
 
 public class Server {
-    private final UserDAO userAccess = new UserMemoryAccess();
+    private final UserDAO userAccess;
     private final AuthDAO authAccess = new AuthMemoryAccess();
     private final GameDAO gameAccess = new GameMemoryAccess();
-    private final RegisterHandler regHandler = new RegisterHandler(userAccess, authAccess, gameAccess);
-    private final ClearHandler clearHandler = new ClearHandler(userAccess, authAccess, gameAccess);
-    private final LoginHandler loginHandler = new LoginHandler(userAccess, authAccess, gameAccess);
-    private final LogoutHandler logoutHandler = new LogoutHandler(userAccess, authAccess, gameAccess);
-    private final CreateHandler createHandler = new CreateHandler(userAccess, authAccess, gameAccess);
-    private final ListHandler listHandler = new ListHandler(userAccess, authAccess, gameAccess);
-    private final JoinHandler joinHandler = new JoinHandler(userAccess, authAccess, gameAccess);
+    private final RegisterHandler regHandler;
+    private final ClearHandler clearHandler;
+    private final LoginHandler loginHandler;
+    private final LogoutHandler logoutHandler;
+    private final CreateHandler createHandler;
+    private final ListHandler listHandler;
+    private final JoinHandler joinHandler;
+    public Server(){
+        try {
+            this.userAccess = new UserSQLAccess();
+        } catch (DataAccessException e){
+            throw new ResponseException(500, "unable to initialize Database");
+        }
+        this.regHandler = new RegisterHandler(userAccess, authAccess, gameAccess);
+        this.clearHandler = new ClearHandler(userAccess, authAccess, gameAccess);
+        this.loginHandler = new LoginHandler(userAccess, authAccess, gameAccess);
+        this.logoutHandler = new LogoutHandler(userAccess, authAccess, gameAccess);
+        this.createHandler = new CreateHandler(userAccess, authAccess, gameAccess);
+        this.listHandler = new ListHandler(userAccess, authAccess, gameAccess);
+        this.joinHandler = new JoinHandler(userAccess, authAccess, gameAccess);
 
+
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -38,6 +54,7 @@ public class Server {
         Spark.exception(AlreadyTakenException.class, ExceptionHandler::takenHandler);
         Spark.exception(BadRequestException.class, ExceptionHandler::badRequestHandler);
         Spark.exception(UnauthorizedException.class, ExceptionHandler::unauthorizedHandler);
+        Spark.exception(DataAccessException.class, ExceptionHandler::dataAccessHandler);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 

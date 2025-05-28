@@ -23,7 +23,7 @@ public class RegisterHandler{
     }
 
 
-    public String registerUser(Request req, Response res) throws AlreadyTakenException, BadRequestException {
+    public String registerUser(Request req, Response res) throws AlreadyTakenException, BadRequestException, DataAccessException{
         var registerRequest = new Gson().fromJson(req.body(), RegisterRequest.class);
         RegisterResponse registerResponse = userService.register(registerRequest);
         return new Gson().toJson(registerResponse);

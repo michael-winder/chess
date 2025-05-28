@@ -30,7 +30,7 @@ public class UserSQLTest {
     }
 
     @AfterEach
-    public void reset() throws SQLException {
+    public void reset() throws DataAccessException, SQLException {
         USER_SQL_ACCESS.deleteAllUsers();
         conn.rollback();
     }
@@ -53,7 +53,7 @@ public class UserSQLTest {
     }
 
     @Test
-    public void getUserTest() {
+    public void getUserTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest("Michael","pass","email");
         USER_SQL_ACCESS.createUser(request);
         UserData user = USER_SQL_ACCESS.getUser("Michael");

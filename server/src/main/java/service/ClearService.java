@@ -13,7 +13,7 @@ public class ClearService {
     }
 
 
-    public String clear(){
+    public String clear() throws DataAccessException{
         userAccess.deleteAllUsers();
         authAccess.deleteAllAuth();
         gameAccess.deleteAllGames();

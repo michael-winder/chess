@@ -24,31 +24,31 @@ public class GameServiceTest {
     TestHelperMethods methods = new TestHelperMethods(USER_ACCESS, AUTH_ACCESS, GAME_ACCESS);
 
     @BeforeEach
-    void startup(){
+    void startup() throws DataAccessException{
         CLEAR_SERVICE.clear();
     }
 
     @Test
-    void createGame() throws AlreadyTakenException {
+    void createGame() throws AlreadyTakenException, DataAccessException {
         RegisterResponse regResponse = methods.registerUser("Michael","pass","email");
         CreateResponse createResponse = methods.createGame(regResponse.authToken(), "MyGame");
         assertNotNull(GAME_ACCESS.getGame(createResponse.gameID()));
     }
 
     @Test
-    void createWithBadKey() throws BadRequestException, AlreadyTakenException {
+    void createWithBadKey() throws BadRequestException, AlreadyTakenException, DataAccessException {
         RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
         assertThrows(UnauthorizedException.class, () -> methods.createGame("badAuth","newGame"));
     }
 
     @Test
-    void createWithNullName() throws BadRequestException, AlreadyTakenException {
+    void createWithNullName() throws BadRequestException, AlreadyTakenException, DataAccessException {
         RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
         assertThrows(BadRequestException.class, () -> methods.createGame(registerResponse.authToken(),null));
     }
 
     @Test
-    void listSuccess() throws UnauthorizedException, AlreadyTakenException {
+    void listSuccess() throws UnauthorizedException, AlreadyTakenException, DataAccessException {
         RegisterResponse registerResponse = methods.registerUser("Michael","pass","email");
         CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(),"game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(),"game2");
@@ -59,7 +59,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void listException() throws UnauthorizedException, AlreadyTakenException {
+    void listException() throws UnauthorizedException, AlreadyTakenException, DataAccessException {
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse1 = methods.createGame(registerResponse.authToken(), "game1");
         CreateResponse createResponse2 = methods.createGame(registerResponse.authToken(), "game2");
@@ -67,7 +67,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinSuccess() throws AlreadyTakenException{
+    void joinSuccess() throws AlreadyTakenException, DataAccessException{
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
         JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());
@@ -76,7 +76,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinColorTaken() throws AlreadyTakenException{
+    void joinColorTaken() throws AlreadyTakenException, DataAccessException{
         RegisterResponse registerResponse = methods.registerUser("Michael", "pass", "email");
         CreateResponse createResponse = methods.createGame(registerResponse.authToken(), "game1");
         JoinRequest joinRequest = new JoinRequest(ChessGame.TeamColor.BLACK, createResponse.gameID());

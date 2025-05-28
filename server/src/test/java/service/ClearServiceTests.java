@@ -17,12 +17,12 @@ public class ClearServiceTests {
     static final TestHelperMethods METHODS = new TestHelperMethods(USER_ACCESS, AUTH_ACCESS, GAME_ACCESS);
 
     @BeforeEach
-    void startup(){
+    void startup() throws DataAccessException{
         CLEAR_SERVICE.clear();
     }
 
     @Test
-    void successfulClear() throws AlreadyTakenException {
+    void successfulClear() throws AlreadyTakenException, DataAccessException {
         RegisterResponse registerResponse1 = METHODS.registerUser("Michael","pass","email");
         RegisterResponse registerResponse2 = METHODS.registerUser("Michael2","pass","email");
         CreateResponse createResponse1 = METHODS.createGame(registerResponse1.authToken(),"game1");

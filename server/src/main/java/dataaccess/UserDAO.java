@@ -5,9 +5,9 @@ import requests.RegisterRequest;
 import model.UserData;
 
 public interface UserDAO {
-    UserData getUser(String username);
+    UserData getUser(String username) throws DataAccessException;
 
-    void createUser(RegisterRequest request);
+    void createUser(RegisterRequest request) throws DataAccessException;
 
-    void deleteAllUsers();
+    void deleteAllUsers() throws DataAccessException;
 }

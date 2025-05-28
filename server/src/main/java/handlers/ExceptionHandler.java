@@ -1,5 +1,6 @@
 package handlers;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
@@ -25,6 +26,7 @@ public class ExceptionHandler {
 
     public static void dataAccessHandler(DataAccessException ex, Request req, Response res){
         res.status(500);
-        res.body("Error: Data access exception");
+        res.body("{\"message\":\"Data access exception\"}");
+
     }
 }

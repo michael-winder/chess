@@ -41,7 +41,7 @@ public class GameSQLAccess implements GameDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create authToken", e);
+            throw new DataAccessException("Unable to create game", e);
         }
         return gameID;
     }
@@ -52,7 +52,7 @@ public class GameSQLAccess implements GameDAO{
 
     public GameData getGame(int gameID) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement("SELECT whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?")){
+            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?")){
                 preparedStatement.setInt(1, gameID);
                 try (var rs = preparedStatement.executeQuery()){
                     if (rs.next()) {
@@ -97,7 +97,7 @@ public class GameSQLAccess implements GameDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create authToken", e);
+            throw new DataAccessException("Unable to update game", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class GameSQLAccess implements GameDAO{
             ps.setInt(1, gameID);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to clear authToken", e);
+            throw new DataAccessException("Unable to delete game", e);
         }
     }
 

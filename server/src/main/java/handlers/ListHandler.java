@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.UnauthorizedException;
@@ -25,7 +26,7 @@ public class ListHandler {
         gameService = new GameService(userAccess, authAccess, gameAccess);
     }
 
-    public String listGames(Request req, Response res) throws UnauthorizedException {
+    public String listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
         ListResponse response = gameService.list(authToken);
         return new Gson().toJson(response);

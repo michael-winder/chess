@@ -38,12 +38,12 @@ public class TestHelperMethods {
         return userService.login(request);
     }
 
-    public LogoutResponse logoutUser(String authToken){
+    public LogoutResponse logoutUser(String authToken) throws DataAccessException{
         LogoutRequest request = new LogoutRequest(authToken);
         return userService.logout(request);
     }
 
-    public CreateResponse createGame(String authToken, String gameName){
+    public CreateResponse createGame(String authToken, String gameName) throws DataAccessException{
         CreateRequest request = new CreateRequest(gameName);
         return gameService.create(request, authToken);
     }

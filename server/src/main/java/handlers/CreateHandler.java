@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.BadRequestException;
@@ -24,7 +25,7 @@ public class CreateHandler {
         gameService = new GameService(userAccess, authAccess, gameAccess);
     }
 
-    public String createGame(Request req, Response res) throws UnauthorizedException, BadRequestException {
+    public String createGame(Request req, Response res) throws UnauthorizedException, BadRequestException, DataAccessException {
         String authToken = req.headers("authorization");
         var createRequest = new Gson().fromJson(req.body(), CreateRequest.class);
         CreateResponse response = gameService.create(createRequest, authToken);

@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.BadRequestException;
@@ -27,7 +28,7 @@ public class LogoutHandler {
     }
 
 
-    public String logoutUser(Request req, Response res) throws UnauthorizedException {
+    public String logoutUser(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
         LogoutRequest logoutRequest = new LogoutRequest(authToken);
         LogoutResponse response = userService.logout(logoutRequest);

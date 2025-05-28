@@ -54,7 +54,7 @@ public class UserService {
         return new LoginResponse(r.username(),authToken);
     }
 
-    public LogoutResponse logout(LogoutRequest r) throws UnauthorizedException{
+    public LogoutResponse logout(LogoutRequest r) throws UnauthorizedException, DataAccessException{
         if (r == null){
             throw new UnauthorizedException(401,"Error: unauthorized");
         }

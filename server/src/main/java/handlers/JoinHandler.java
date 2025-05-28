@@ -2,6 +2,7 @@ package handlers;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.AlreadyTakenException;
@@ -25,7 +26,7 @@ public class JoinHandler {
         gameService = new GameService(userAccess, authAccess, gameAccess);
     }
 
-    public String joinGame(Request req, Response res) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public String joinGame(Request req, Response res) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         String authToken = req.headers("authorization");
         var joinRequest = new Gson().fromJson(req.body(), JoinRequest.class);
         JoinResponse response = gameService.join(joinRequest, authToken);

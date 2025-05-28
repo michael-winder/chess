@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exception.AlreadyTakenException;
@@ -23,7 +24,7 @@ public class GameService {
         this.gameAccess = gameAccess;
     }
 
-    public CreateResponse create(CreateRequest request, String authToken){
+    public CreateResponse create(CreateRequest request, String authToken) throws DataAccessException {
         if (request.gameName() == null){
             throw new BadRequestException(400,"Error: bad request");
         }
@@ -34,14 +35,14 @@ public class GameService {
         return new CreateResponse(gameID);
     }
 
-    public ListResponse list(String authToken){
+    public ListResponse list(String authToken) throws DataAccessException{
         if (authAccess.getAuth(authToken) == null){
             throw new UnauthorizedException(401, "Error: unauthorized");
         }
         return new ListResponse(gameAccess.listGames());
     }
 
-    public JoinResponse join(JoinRequest request, String authToken) throws UnauthorizedException, BadRequestException, AlreadyTakenException{
+    public JoinResponse join(JoinRequest request, String authToken) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException{
         if (authAccess.getAuth(authToken) == null){
             throw new UnauthorizedException(401, "Error: unauthorized");
         }

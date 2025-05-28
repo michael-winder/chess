@@ -4,15 +4,15 @@ import model.GameData;
 import java.util.ArrayList;
 
 public interface GameDAO {
-    void deleteAllGames();
+    void deleteAllGames() throws DataAccessException;
 
-    int createGame(String whiteUsername, String blackUsername, String gameName, chess.ChessGame chessGame);
+    int createGame(String whiteUsername, String blackUsername, String gameName, chess.ChessGame chessGame) throws DataAccessException;
 
     int generateGameID();
 
-    GameData getGame(int gameID);
+    GameData getGame(int gameID) throws DataAccessException;
 
-    ArrayList<GameData> listGames();
+    ArrayList<GameData> listGames() throws DataAccessException;
 
-    void updateGame(GameData gameData);
+    void updateGame(GameData gameData) throws DataAccessException;
 }

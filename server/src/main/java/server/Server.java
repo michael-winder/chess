@@ -13,7 +13,7 @@ import exception.AlreadyTakenException;
 public class Server {
     private final UserDAO userAccess;
     private final AuthDAO authAccess;
-    private final GameDAO gameAccess = new GameMemoryAccess();
+    private final GameDAO gameAccess;
     private final RegisterHandler regHandler;
     private final ClearHandler clearHandler;
     private final LoginHandler loginHandler;
@@ -25,6 +25,7 @@ public class Server {
         try {
             this.userAccess = new UserSQLAccess();
             this.authAccess = new AuthSQLAccess();
+            this.gameAccess = new GameSQLAccess();
         } catch (DataAccessException e){
             throw new ResponseException(500, "unable to initialize Database");
         }

@@ -6,6 +6,7 @@ import model.UserData;
 import requests.RegisterRequest;
 import model.UserData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -13,11 +14,11 @@ import static java.sql.Types.NULL;
 
 public class UserSQLAccess implements UserDAO{
 
-    public UserSQLAccess() throws ResponseException{
+    public UserSQLAccess() throws ResponseException, DataAccessException{
         configureDatabase();
     }
 
-    public void createUser(RegisterRequest request) throws ResponseException{
+    public void createUser(RegisterRequest request){
         try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES (?,?, ?)")){
                 preparedStatement.setString(1, request.username());
@@ -26,7 +27,7 @@ public class UserSQLAccess implements UserDAO{
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to update database: %s, %s", "createUSer", e.getMessage()));
+            //throw new DataAccessException("Unable to create user", e);
         }
     }
 
@@ -46,16 +47,17 @@ public class UserSQLAccess implements UserDAO{
                 }
             }
         } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to get user: %s", e.getMessage()));
+//            throw new DataAccessException("Unable to create user", e);
         }
+        return null;
     }
 
-    public void deleteAllUsers() throws ResponseException{
+    public void deleteAllUsers() {
         try (var conn = DatabaseManager.getConnection()) {
             var ps = conn.prepareStatement("TRUNCATE TABLE user");
             ps.executeUpdate();
         } catch (SQLException | DataAccessException e) {
-            throw new ResponseException(500, String.format("unable to get delete users: %s", e.getMessage()));
+           // throw new DataAccessException("Unable to create user", e);
         }
     }
 
@@ -72,7 +74,7 @@ public class UserSQLAccess implements UserDAO{
     };
 
 
-    private void configureDatabase() throws ResponseException {
+    private void configureDatabase() throws ResponseException, DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()){
             for (var statement : createStatements){

@@ -42,7 +42,8 @@ public class GameService {
         return new ListResponse(gameAccess.listGames());
     }
 
-    public JoinResponse join(JoinRequest request, String authToken) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException{
+    public JoinResponse join(JoinRequest request, String authToken)
+            throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException{
         if (authAccess.getAuth(authToken) == null){
             throw new UnauthorizedException(401, "Error: unauthorized");
         }

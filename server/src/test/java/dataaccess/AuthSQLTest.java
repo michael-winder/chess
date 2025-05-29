@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class AuthSQLTest {
-    static AuthSQLAccess AUTH_SQL_ACCESS;
+    static AuthSQLAccess authSQLAccess;
     private static Connection conn;
 
     @BeforeAll
     public static void setupSQL() throws DataAccessException{
-        AUTH_SQL_ACCESS = new AuthSQLAccess();
+        authSQLAccess = new AuthSQLAccess();
     }
 
     @BeforeEach
@@ -32,49 +32,49 @@ public class AuthSQLTest {
 
     @AfterEach
     public void reset() throws DataAccessException, SQLException {
-        AUTH_SQL_ACCESS.deleteAllAuth();
+        authSQLAccess.deleteAllAuth();
         conn.rollback();
     }
 
     @Test
     public void createAuthTest() throws DataAccessException{
-        String authToken = AUTH_SQL_ACCESS.createAuth("Michael");
+        String authToken = authSQLAccess.createAuth("Michael");
         HashMap<String, String> auths = loadAuths();
         assertTrue(auths.containsKey(authToken));
     }
 
     @Test
     public void failedCreate() {
-        assertThrows(Exception.class, () -> AUTH_SQL_ACCESS.createAuth(null));
+        assertThrows(Exception.class, () -> authSQLAccess.createAuth(null));
     }
 
     @Test
     public void getAuthTest() throws DataAccessException{
-        String authToken = AUTH_SQL_ACCESS.createAuth("Michael");
-        AuthData auth = AUTH_SQL_ACCESS.getAuth(authToken);
+        String authToken = authSQLAccess.createAuth("Michael");
+        AuthData auth = authSQLAccess.getAuth(authToken);
         assertTrue(auth.authToken().equals(authToken) && auth.username().equals("Michael"));
     }
 
     @Test
     public void failedGetAuth() throws DataAccessException{
-        AuthData data = AUTH_SQL_ACCESS.getAuth("wrong");
+        AuthData data = authSQLAccess.getAuth("wrong");
         assertNull(data);
     }
 
     @Test
     public void deleteAllAuthTest() throws DataAccessException{
-        String authToken = AUTH_SQL_ACCESS.createAuth("Michael");
-        String authToken2 = AUTH_SQL_ACCESS.createAuth("Jacob");
-        AUTH_SQL_ACCESS.deleteAllAuth();
+        String authToken = authSQLAccess.createAuth("Michael");
+        String authToken2 = authSQLAccess.createAuth("Jacob");
+        authSQLAccess.deleteAllAuth();
         HashMap<String, String> auths = loadAuths();
         assertTrue(auths.isEmpty());
     }
 
     @Test
     public void deleteAuthTest() throws DataAccessException{
-        String authToken = AUTH_SQL_ACCESS.createAuth("Michael");
-        String authToken2 = AUTH_SQL_ACCESS.createAuth("Jacob");
-        AUTH_SQL_ACCESS.deleteAuth(authToken);
+        String authToken = authSQLAccess.createAuth("Michael");
+        String authToken2 = authSQLAccess.createAuth("Jacob");
+        authSQLAccess.deleteAuth(authToken);
         HashMap<String, String> auths = loadAuths();
         assertFalse(auths.containsKey(authToken));
         assertTrue(auths.containsKey(authToken2));

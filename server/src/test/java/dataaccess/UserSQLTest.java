@@ -14,13 +14,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserSQLTest {
-    static UserSQLAccess USER_SQL_ACCESS ;
+    static UserSQLAccess userSQLAccess ;
     private static Connection conn;
 
 
     @BeforeAll
     public static void setupSQL() throws DataAccessException{
-        USER_SQL_ACCESS = new UserSQLAccess();
+        userSQLAccess = new UserSQLAccess();
     }
 
     @BeforeEach
@@ -31,14 +31,14 @@ public class UserSQLTest {
 
     @AfterEach
     public void reset() throws DataAccessException, SQLException {
-        USER_SQL_ACCESS.deleteAllUsers();
+        userSQLAccess.deleteAllUsers();
         conn.rollback();
     }
 
     @Test
     public void createUserTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest("Michael","pass","email");
-        USER_SQL_ACCESS.createUser(request);
+        userSQLAccess.createUser(request);
         List<String> users = loadUsers();
         assertTrue(users.contains("Michael"));
     }
@@ -46,14 +46,14 @@ public class UserSQLTest {
     @Test
     public void failedCreateTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest(null,"pass","email");
-        assertThrows(Exception.class, () -> USER_SQL_ACCESS.createUser(request));
+        assertThrows(Exception.class, () -> userSQLAccess.createUser(request));
     }
 
     @Test
     public void deleteAllTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest("Michael","pass","email");
-        USER_SQL_ACCESS.createUser(request);
-        USER_SQL_ACCESS.deleteAllUsers();
+        userSQLAccess.createUser(request);
+        userSQLAccess.deleteAllUsers();
         List<String> users = loadUsers();
         assertTrue(users.isEmpty());
     }
@@ -61,15 +61,15 @@ public class UserSQLTest {
     @Test
     public void getUserTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest("Michael","pass","email");
-        USER_SQL_ACCESS.createUser(request);
-        UserData user = USER_SQL_ACCESS.getUser("Michael");
+        userSQLAccess.createUser(request);
+        UserData user = userSQLAccess.getUser("Michael");
         assertTrue(user.username().equals("Michael") &&
                 user.email().equals("email"));
     }
 
     @Test
     public void failedGetUser() throws DataAccessException{
-        UserData data = USER_SQL_ACCESS.getUser("bing bong");
+        UserData data = userSQLAccess.getUser("bing bong");
         assertNull(data);
     }
 

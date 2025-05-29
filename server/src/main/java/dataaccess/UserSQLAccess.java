@@ -14,9 +14,9 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class UserSQLAccess implements UserDAO{
-
+    public GameSQLAccess gameSQLAccess = new GameSQLAccess();
     public UserSQLAccess() throws DataAccessException{
-        configureDatabase();
+        gameSQLAccess.configureDatabase();
     }
 
     public void createUser(RegisterRequest request) throws DataAccessException{
@@ -77,19 +77,4 @@ public class UserSQLAccess implements UserDAO{
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()){
-            for (var statement : createStatements){
-                try (var preparedStatement = conn.prepareStatement(statement)){
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex){
-            throw new DataAccessException("unable to configure Database");
-        }
-
-    }
 }

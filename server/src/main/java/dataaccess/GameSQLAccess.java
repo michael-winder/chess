@@ -29,7 +29,9 @@ public class GameSQLAccess implements GameDAO{
         var chess = new Gson().toJson(chessGame);
         int gameID = 0;
         try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO game (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
+            try (var preparedStatement = conn.prepareStatement(
+                    "INSERT INTO game (whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS)){
                 preparedStatement.setString(1, whiteUsername);
                 preparedStatement.setString(2, blackUsername);
                 preparedStatement.setString(3,gameName);
@@ -49,7 +51,8 @@ public class GameSQLAccess implements GameDAO{
 
     public GameData getGame(int gameID) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?")){
+            try (var preparedStatement = conn.prepareStatement(
+                    "SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game WHERE gameID=?")){
                 preparedStatement.setInt(1, gameID);
                 try (var rs = preparedStatement.executeQuery()){
                     if (rs.next()) {
@@ -85,7 +88,8 @@ public class GameSQLAccess implements GameDAO{
         var chess = new Gson().toJson(gameData.game());
         deleteGame(gameData.gameID());
         try (var conn = DatabaseManager.getConnection()){
-            try (var preparedStatement = conn.prepareStatement("INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)")){
+            try (var preparedStatement = conn.prepareStatement(
+                    "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, chessGame) VALUES (?, ?, ?, ?, ?)")){
                 preparedStatement.setInt(1, gameData.gameID());
                 preparedStatement.setString(2, gameData.whiteUsername());
                 preparedStatement.setString(3, gameData.blackUsername());
@@ -125,14 +129,14 @@ public class GameSQLAccess implements GameDAO{
             whiteUsername varchar(255),
             blackUsername varchar(255),
             gameName varchar(255) NOT NULL,
-            chessGame TEXT DEFAULT NULL,
+            chessGame TEXT,
             PRIMARY KEY (gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
 
 
-    private void configureDatabase() throws DataAccessException {
+    public void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()){
             for (var statement : createStatements){

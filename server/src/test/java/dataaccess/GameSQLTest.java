@@ -2,30 +2,24 @@ package dataaccess;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import requests.RegisterRequest;
-
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameSQLTest {
-    static GameSQLAccess GAME_SQL ;
+    static GameSQLAccess gameSQL ;
     private static Connection conn;
 
     @BeforeAll
     public static void setupSQL() throws DataAccessException{
-        GAME_SQL = new GameSQLAccess();
+        gameSQL = new GameSQLAccess();
     }
 
     @BeforeEach
@@ -36,7 +30,7 @@ public class GameSQLTest {
 
     @AfterEach
     public void reset() throws DataAccessException, SQLException {
-        GAME_SQL.deleteAllGames();
+        gameSQL.deleteAllGames();
         conn.rollback();
     }
 
@@ -56,13 +50,13 @@ public class GameSQLTest {
     @Test
     public void  getGameTest() throws DataAccessException{
         int id = addGame("Jacob", "Jake", "game1");
-        GameData data = GAME_SQL.getGame(id);
+        GameData data = gameSQL.getGame(id);
         assertEquals("Jacob", data.whiteUsername());
     }
 
     @Test
     public void failedGet() throws DataAccessException{
-        GameData game = GAME_SQL.getGame(7005);
+        GameData game = gameSQL.getGame(7005);
         assertNull(game);
     }
 
@@ -71,7 +65,7 @@ public class GameSQLTest {
         int id = addGame("Andrew", "Andy", "game1");
         int id2 = addGame("Michael", "Mike", "game2");
         HashMap<Integer, GameData> gameMap = loadGames();
-        ArrayList<GameData> gameList = GAME_SQL.listGames();
+        ArrayList<GameData> gameList = gameSQL.listGames();
         assertEquals(gameMap.get(id), gameList.get(0));
         assertEquals(gameMap.get(id2), gameList.get(1));
     }
@@ -86,7 +80,7 @@ public class GameSQLTest {
     public void deleteAllTest() throws DataAccessException{
         int id = addGame("Andrew", "Andy", "game1");
         int id2 = addGame("Michael", "Mike", "game2");
-        GAME_SQL.deleteAllGames();
+        gameSQL.deleteAllGames();
         HashMap<Integer, GameData> gameMap = loadGames();
         assertTrue(gameMap.isEmpty());
     }
@@ -96,14 +90,14 @@ public class GameSQLTest {
         int id = addGame("Andrew", "Andy", "game1");
         ChessGame game2 = new ChessGame();
         GameData gameData = new GameData(id, "James", "Jim", "game", game2);
-        GAME_SQL.updateGame(gameData);
+        gameSQL.updateGame(gameData);
         HashMap<Integer, GameData> gameMap = loadGames();
         assertEquals("James", gameMap.get(id).whiteUsername());
     }
 
     @Test
     public void failedUpdate() throws DataAccessException{
-        assertThrows(Exception.class, () -> GAME_SQL.updateGame(null));
+        assertThrows(Exception.class, () -> gameSQL.updateGame(null));
     }
 
     private HashMap<Integer, GameData> loadGames() throws DataAccessException{
@@ -131,6 +125,6 @@ public class GameSQLTest {
 
     private int addGame(String whiteUsername, String blackUsername, String gameName) throws DataAccessException{
         ChessGame game = new ChessGame();
-        return GAME_SQL.createGame(whiteUsername, blackUsername, blackUsername, game);
+        return gameSQL.createGame(whiteUsername, blackUsername, blackUsername, game);
     }
 }

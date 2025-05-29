@@ -3,6 +3,7 @@ package dataaccess;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import requests.RegisterRequest;
 import model.UserData;
 
@@ -21,8 +22,9 @@ public class UserSQLAccess implements UserDAO{
     public void createUser(RegisterRequest request) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             try (var preparedStatement = conn.prepareStatement("INSERT INTO user (username, password, email) VALUES (?,?, ?)")){
+                String hashedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
                 preparedStatement.setString(1, request.username());
-                preparedStatement.setString(2, request.password());
+                preparedStatement.setString(2, hashedPassword);
                 preparedStatement.setString(3, request.email());
                 preparedStatement.executeUpdate();
             }
@@ -60,6 +62,10 @@ public class UserSQLAccess implements UserDAO{
         }
     }
 
+    public boolean verifyUser(String username, String password) throws DataAccessException{
+        UserData user = getUser(username);
+        return BCrypt.checkpw(password, user.password());
+    }
 
     private final String[] createStatements = {
             """

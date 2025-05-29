@@ -47,7 +47,7 @@ public class UserService {
         UserData userData = userAccess.getUser(r.username());
         if (userData == null){
             throw new UnauthorizedException(401,"Error: unauthorized");
-        } else if (!Objects.equals(userData.password(), r.password())){
+        } else if (!userAccess.verifyUser(r.username(),r.password())){
             throw new UnauthorizedException(401,"Error: unauthorized");
         }
         String authToken = authAccess.createAuth(r.username());

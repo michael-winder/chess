@@ -26,7 +26,7 @@ public class ExceptionHandler {
 
     public static void dataAccessHandler(DataAccessException ex, Request req, Response res){
         res.status(500);
-        res.body("{\"message\":\"Data access exception\"}");
+        res.body("{\"message\":\"Error: Data access exception\"}");
 
     }
 }

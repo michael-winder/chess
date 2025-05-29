@@ -136,6 +136,7 @@ public class GameSQLAccess implements GameDAO{
     };
 
 
+
     public void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()){

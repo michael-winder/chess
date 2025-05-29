@@ -46,9 +46,6 @@ public class GameSQLAccess implements GameDAO{
         return gameID;
     }
 
-    public int generateGameID(){
-        return 1;
-    }
 
     public GameData getGame(int gameID) throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){

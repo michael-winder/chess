@@ -21,7 +21,7 @@ public class GameMemoryAccess implements GameDAO{
         return gameID;
     }
 
-    public int generateGameID(){
+    private int generateGameID(){
         return gameID++;
     }
 

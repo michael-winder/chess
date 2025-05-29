@@ -8,8 +8,6 @@ public interface GameDAO {
 
     int createGame(String whiteUsername, String blackUsername, String gameName, chess.ChessGame chessGame) throws DataAccessException;
 
-    int generateGameID();
-
     GameData getGame(int gameID) throws DataAccessException;
 
     ArrayList<GameData> listGames() throws DataAccessException;

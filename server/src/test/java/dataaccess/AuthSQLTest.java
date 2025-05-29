@@ -7,12 +7,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import requests.RegisterRequest;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,10 +44,21 @@ public class AuthSQLTest {
     }
 
     @Test
+    public void failedCreate() {
+        assertThrows(Exception.class, () -> AUTH_SQL_ACCESS.createAuth(null));
+    }
+
+    @Test
     public void getAuthTest() throws DataAccessException{
         String authToken = AUTH_SQL_ACCESS.createAuth("Michael");
         AuthData auth = AUTH_SQL_ACCESS.getAuth(authToken);
         assertTrue(auth.authToken().equals(authToken) && auth.username().equals("Michael"));
+    }
+
+    @Test
+    public void failedGetAuth() throws DataAccessException{
+        AuthData data = AUTH_SQL_ACCESS.getAuth("wrong");
+        assertNull(data);
     }
 
     @Test

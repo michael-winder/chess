@@ -49,10 +49,21 @@ public class GameSQLTest {
     }
 
     @Test
+    public void failedCreate(){
+        assertThrows(Exception.class, () -> addGame(null, null, null));
+    }
+
+    @Test
     public void  getGameTest() throws DataAccessException{
         int id = addGame("Jacob", "Jake", "game1");
         GameData data = GAME_SQL.getGame(id);
         assertEquals("Jacob", data.whiteUsername());
+    }
+
+    @Test
+    public void failedGet() throws DataAccessException{
+        GameData game = GAME_SQL.getGame(7005);
+        assertNull(game);
     }
 
     @Test
@@ -63,6 +74,12 @@ public class GameSQLTest {
         ArrayList<GameData> gameList = GAME_SQL.listGames();
         assertEquals(gameMap.get(id), gameList.get(0));
         assertEquals(gameMap.get(id2), gameList.get(1));
+    }
+
+    @Test
+    public void emptyList() throws DataAccessException{
+        HashMap<Integer, GameData> gameMap = loadGames();
+        assertTrue(gameMap.isEmpty());
     }
 
     @Test
@@ -82,6 +99,11 @@ public class GameSQLTest {
         GAME_SQL.updateGame(gameData);
         HashMap<Integer, GameData> gameMap = loadGames();
         assertEquals("James", gameMap.get(id).whiteUsername());
+    }
+
+    @Test
+    public void failedUpdate() throws DataAccessException{
+        assertThrows(Exception.class, () -> GAME_SQL.updateGame(null));
     }
 
     private HashMap<Integer, GameData> loadGames() throws DataAccessException{

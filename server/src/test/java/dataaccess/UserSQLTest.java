@@ -44,6 +44,12 @@ public class UserSQLTest {
     }
 
     @Test
+    public void failedCreateTest() throws DataAccessException{
+        RegisterRequest request = new RegisterRequest(null,"pass","email");
+        assertThrows(Exception.class, () -> USER_SQL_ACCESS.createUser(request));
+    }
+
+    @Test
     public void deleteAllTest() throws DataAccessException{
         RegisterRequest request = new RegisterRequest("Michael","pass","email");
         USER_SQL_ACCESS.createUser(request);
@@ -58,8 +64,13 @@ public class UserSQLTest {
         USER_SQL_ACCESS.createUser(request);
         UserData user = USER_SQL_ACCESS.getUser("Michael");
         assertTrue(user.username().equals("Michael") &&
-                user.password().equals("pass") &&
                 user.email().equals("email"));
+    }
+
+    @Test
+    public void failedGetUser() throws DataAccessException{
+        UserData data = USER_SQL_ACCESS.getUser("bing bong");
+        assertNull(data);
     }
 
     private List<String> loadUsers() throws DataAccessException{

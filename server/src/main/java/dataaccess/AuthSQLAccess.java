@@ -26,7 +26,7 @@ public class AuthSQLAccess implements AuthDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Unable to create user", e);
+            throw new DataAccessException("Unable to get auth", e);
         }
     }
 

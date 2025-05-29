@@ -9,7 +9,7 @@ import java.util.UUID;
 public class AuthSQLAccess implements AuthDAO{
     public GameSQLAccess gameSQLAccess = new GameSQLAccess();
     public AuthSQLAccess() throws DataAccessException{
-        gameSQLAccess.configureDatabase();
+        gameSQLAccess.configureDatabase(createStatements);
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException{

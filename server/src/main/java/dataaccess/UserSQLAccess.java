@@ -16,7 +16,7 @@ import static java.sql.Types.NULL;
 public class UserSQLAccess implements UserDAO{
     public GameSQLAccess gameSQLAccess = new GameSQLAccess();
     public UserSQLAccess() throws DataAccessException{
-        gameSQLAccess.configureDatabase();
+        gameSQLAccess.configureDatabase(createStatements);
     }
 
     public void createUser(RegisterRequest request) throws DataAccessException{

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class GameSQLAccess implements GameDAO{
 
     public GameSQLAccess() throws DataAccessException{
-        configureDatabase();
+        configureDatabase(createStatements);
     }
 
     public void deleteAllGames() throws DataAccessException {
@@ -137,7 +137,7 @@ public class GameSQLAccess implements GameDAO{
 
 
 
-    public void configureDatabase() throws DataAccessException {
+    public void configureDatabase(String[] createStatements) throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()){
             for (var statement : createStatements){

@@ -19,42 +19,42 @@ public class ServerFacade {
     }
 
     public void clear(){
-        makeRequest("DELETE", "/db", null, null);
+        makeRequest("DELETE", "/db", null, null, null);
     }
 
     public RegisterResponse register(RegisterRequest request){
-        return makeRequest("POST", "/user", request, RegisterResponse.class);
+        return makeRequest("POST", "/user", request, null, RegisterResponse.class);
     }
 
     public LoginResponse login(LoginRequest request){
-        return makeRequest("POST", "/session", request, LoginResponse.class);
+        return makeRequest("POST", "/session", request, null, LoginResponse.class);
     }
 
-    public void logout(){
-        makeRequest("DELETE", "/session", null, null);
+    public void logout(String authToken){
+        makeRequest("DELETE", "/session", null, authToken, null);
     }
 
-    public ListResponse listGames(){
-        return makeRequest("GET", "/game", null, ListResponse.class);
+    public ListResponse listGames(String authToken){
+        return makeRequest("GET", "/game", null, authToken, ListResponse.class);
     }
 
-    public CreateResponse createGame(CreateRequest request){
-        return makeRequest("POST", "/game", request, CreateResponse.class);
+    public CreateResponse createGame(CreateRequest request, String authToken){
+        return makeRequest("POST", "/game", request, authToken, CreateResponse.class);
     }
 
-    public void joinGame(JoinRequest request){
-        makeRequest("PUT", "/game", request, null);
+    public void joinGame(JoinRequest request, String authToken){
+        makeRequest("PUT", "/game", request, authToken, null);
     }
 
 
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true); //sending a request body
-
+            writeHeader(authToken, http);
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
@@ -73,6 +73,12 @@ public class ServerFacade {
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
+        }
+    }
+
+    private static void writeHeader(String authToken, HttpURLConnection http){
+        if (authToken != null){
+            http.addRequestProperty("authorization", authToken);
         }
     }
 

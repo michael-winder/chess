@@ -10,6 +10,9 @@ import responses.LoginResponse;
 import responses.RegisterResponse;
 import server.Server;
 import server.ServerFacade;
+
+import javax.xml.crypto.Data;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
@@ -77,8 +80,16 @@ public class ServerFacadeTests {
 
     @Test
     public void loginFail() throws ResponseException{
-        registerUser("Mike","pass","mail");
-        assertThrows(Exception.class, () -> loginUser("Milk","pass"));
+        registerUser("Mike","password","mail");
+        assertThrows(Exception.class, () -> loginUser("Milk","password"));
+    }
+
+    @Test
+    public void logout() throws DataAccessException {
+        RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
+        serverFacade.logout(registerResponse.authToken());
+        HashMap <String, String> auths = authTest.loadAuths();
+        assertFalse(auths.containsValue(registerResponse.authToken()));
     }
 
     private RegisterResponse registerUser(String name, String password, String email){

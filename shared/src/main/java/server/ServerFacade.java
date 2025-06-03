@@ -1,10 +1,7 @@
 package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
-import requests.CreateRequest;
-import requests.JoinRequest;
-import requests.LoginRequest;
-import requests.RegisterRequest;
+import requests.*;
 import responses.CreateResponse;
 import responses.ListResponse;
 import responses.LoginResponse;
@@ -25,12 +22,12 @@ public class ServerFacade {
         makeRequest("DELETE", "/db", null, null);
     }
 
-    public RegisterResponse register(){
-        return makeRequest("POST", "/user", RegisterRequest.class, RegisterResponse.class);
+    public RegisterResponse register(RegisterRequest request){
+        return makeRequest("POST", "/user", request, RegisterResponse.class);
     }
 
-    public LoginResponse login(){
-        return makeRequest("POST", "/session", LoginRequest.class, LoginResponse.class);
+    public LoginResponse login(LoginRequest request){
+        return makeRequest("POST", "/session", request, LoginResponse.class);
     }
 
     public void logout(){
@@ -41,12 +38,12 @@ public class ServerFacade {
         return makeRequest("GET", "/game", null, ListResponse.class);
     }
 
-    public CreateResponse createGame(){
-        return makeRequest("POST", "/game", CreateRequest.class, CreateResponse.class);
+    public CreateResponse createGame(CreateRequest request){
+        return makeRequest("POST", "/game", request, CreateResponse.class);
     }
 
-    public void joinGame(){
-        makeRequest("PUT", "/game", JoinRequest.class, null);
+    public void joinGame(JoinRequest request){
+        makeRequest("PUT", "/game", request, null);
     }
 
 

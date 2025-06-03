@@ -73,7 +73,7 @@ public class UserSQLTest {
         assertNull(data);
     }
 
-    private List<String> loadUsers() throws DataAccessException{
+    public List<String> loadUsers() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             List<String> users = new ArrayList<>();
             try (var preparedStatement = conn.prepareStatement("SELECT username FROM user")){

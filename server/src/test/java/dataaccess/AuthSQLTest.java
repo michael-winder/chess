@@ -81,7 +81,7 @@ public class AuthSQLTest {
     }
 
 
-    private HashMap<String, String> loadAuths() throws DataAccessException{
+    public HashMap<String, String> loadAuths() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             HashMap<String, String> auths = new HashMap<>();
             try (var preparedStatement = conn.prepareStatement("SELECT authToken, username FROM auth")){

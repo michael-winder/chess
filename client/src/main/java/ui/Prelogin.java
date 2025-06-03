@@ -40,7 +40,7 @@ public class Prelogin {
         }
         RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
         RegisterResponse response = serverFacade.register(request);
-        return "Registered!";
+        return "Registered!\n";
     }
 
     public String login(String... params){
@@ -49,7 +49,7 @@ public class Prelogin {
         }
         LoginRequest request = new LoginRequest(params[0], params[1]);
         serverFacade.login(request);
-        return "Logged in";
+        return "Logged in!\n";
     }
 
 

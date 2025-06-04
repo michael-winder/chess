@@ -12,6 +12,12 @@ public class Repl{
     public void run(){
         System.out.println("WELCOME TO THE MOST EPIC CHESS GAME EVER! Type help to get started.");
         Scanner scanner = new Scanner(System.in);
+        preLoginUI(scanner);
+        Postlogin postlogin = new Postlogin(authToken);
+        postLoginUI(scanner, postlogin);
+    }
+
+    private void preLoginUI(Scanner scanner){
         var result = " ";
         while(!result.equals("quit") && !loginStatus){
             String line = scanner.nextLine();
@@ -31,7 +37,10 @@ public class Repl{
                 }
             }
         }
-        Postlogin postlogin = new Postlogin(authToken);
+    }
+
+    private void postLoginUI(Scanner scanner, Postlogin postlogin){
+        String result = "";
         while(!result.equals("quit") && loginStatus){
             String line = scanner.nextLine();
             try {
@@ -43,7 +52,7 @@ public class Repl{
             } catch (Throwable e){
                 var msg = e.toString();
                 if (Objects.equals(msg, "exception.ResponseException: Error: bad request") ||
-                    e instanceof NumberFormatException){
+                        e instanceof NumberFormatException){
                     System.out.print("That is not a valid game ID. Please type a valid game ID\n");
                 } else {
                     System.out.print(msg);

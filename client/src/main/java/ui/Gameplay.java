@@ -28,6 +28,7 @@ public class Gameplay {
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         ChessBoard board = new ChessBoard();
+        board.resetBoard();
         out.print(ERASE_SCREEN);
 
         drawHeaders(out);

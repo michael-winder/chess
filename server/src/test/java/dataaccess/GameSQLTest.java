@@ -100,7 +100,7 @@ public class GameSQLTest {
         assertThrows(Exception.class, () -> gameSQL.updateGame(null));
     }
 
-    private HashMap<Integer, GameData> loadGames() throws DataAccessException{
+    public HashMap<Integer, GameData> loadGames() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()){
             HashMap<Integer, GameData> games = new HashMap<>();
             try (var preparedStatement = conn.prepareStatement("SELECT gameID, whiteUsername, blackUsername, gameName, chessGame FROM game")){

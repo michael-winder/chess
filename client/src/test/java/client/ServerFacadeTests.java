@@ -3,9 +3,12 @@ package client;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
+import model.GameData;
 import org.junit.jupiter.api.*;
+import requests.CreateRequest;
 import requests.LoginRequest;
 import requests.RegisterRequest;
+import responses.CreateResponse;
 import responses.LoginResponse;
 import responses.RegisterResponse;
 import server.Server;
@@ -17,8 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ServerFacadeTests {
@@ -27,6 +32,7 @@ public class ServerFacadeTests {
     private final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
     private final UserSQLTest userTest = new UserSQLTest();
     private final AuthSQLTest authTest = new AuthSQLTest();
+    private final GameSQLTest gameTest = new GameSQLTest();
 
 
     @BeforeAll
@@ -85,11 +91,34 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logout() throws DataAccessException {
+    public void logoutSuccess() throws DataAccessException {
         RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
         serverFacade.logout(registerResponse.authToken());
         HashMap <String, String> auths = authTest.loadAuths();
         assertFalse(auths.containsValue(registerResponse.authToken()));
+    }
+
+    @Test
+    public void logoutFail() throws DataAccessException {
+        registerUser("BigMike", "password", "email");
+        assertThrows(Exception.class, () -> serverFacade.logout("wrong"));
+    }
+
+    @Test
+    public void createGameSuccess() throws DataAccessException {
+        RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
+        LoginResponse loginResponse = loginUser("Jake", "pass");
+        CreateResponse createResponse = create("game1", loginResponse.authToken());
+        HashMap<Integer, GameData> games = gameTest.loadGames();
+        assertTrue(games.containsKey(createResponse.gameID()));
+        assertEquals("game1", games.get(createResponse.gameID()).gameName());
+    }
+
+    @Test
+    public void createGameFail() throws DataAccessException {
+        RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
+        LoginResponse loginResponse = loginUser("Jake", "pass");
+        assertThrows(Exception.class, () -> create("game1", "wrongToken"));
     }
 
     private RegisterResponse registerUser(String name, String password, String email){
@@ -100,6 +129,11 @@ public class ServerFacadeTests {
     private LoginResponse loginUser(String name, String password){
         LoginRequest request = new LoginRequest(name, password);
         return serverFacade.login(request);
+    }
+
+    private CreateResponse create(String gameName, String authToken){
+        CreateRequest request = new CreateRequest(gameName);
+        return serverFacade.createGame(request, authToken);
     }
 
 }

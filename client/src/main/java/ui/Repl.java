@@ -11,13 +11,20 @@ public class Repl{
     Prelogin prelogin = new Prelogin();
     Gameplay gameplay = new Gameplay();
     public boolean loginStatus = false;
+    public boolean joinStatus = false;
+    public boolean quitStatus = false;
+    public ChessGame.TeamColor color;
+    public ChessBoard board;
     String authToken;
     public void run(){
         System.out.println("WELCOME TO THE MOST EPIC CHESS GAME EVER! Type help to get started.");
         Scanner scanner = new Scanner(System.in);
-        preLoginUI(scanner);
-        Postlogin postlogin = new Postlogin(authToken);
-        postLoginUI(scanner, postlogin);
+        while (!quitStatus) {
+            preLoginUI(scanner);
+            Postlogin postlogin = new Postlogin(authToken);
+            postLoginUI(scanner, postlogin);
+            gameplayUI(scanner, postlogin.globalColor);
+        }
     }
 
     private void preLoginUI(Scanner scanner){
@@ -40,6 +47,9 @@ public class Repl{
                 }
             }
         }
+        if (result.equals("quit")){
+            quitStatus = true;
+        }
     }
 
     private void postLoginUI(Scanner scanner, Postlogin postlogin){
@@ -51,12 +61,17 @@ public class Repl{
                 System.out.print(result);
                 if (Objects.equals(result, "Logged out!\n")){
                     loginStatus = false;
+                    joinStatus = false;
+                }
+                if (Objects.equals(result, "Joined!\n") || Objects.equals(result, "Observing!\n")){
+                    joinStatus = true;
+                    break;
                 }
             } catch (Throwable e){
                 var msg = e.toString();
                 if (Objects.equals(msg, "exception.ResponseException: Error: bad request") ||
                         e instanceof NumberFormatException){
-                    System.out.print("That is not a valid game ID. Please type a valid game ID\n");
+                    System.out.print("That is not a valid game number. Please type a valid game game number\n");
                 } else if (Objects.equals(msg, "exception.ResponseException: Error: already taken")){
                     System.out.print("That color is already taken!\n");
                 } else {
@@ -64,10 +79,16 @@ public class Repl{
                 }
             }
         }
+        if (result.equals("quit")){
+            quitStatus = true;
+        }
     }
 
-    private void gameplayUI(Scanner scanner){
-        ChessBoard board = new ChessBoard();
-        Gameplay.drawBoard(board, ChessGame.TeamColor.BLACK);
+    private void gameplayUI(Scanner scanner, ChessGame.TeamColor color){
+        if (joinStatus) {
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            Gameplay.drawBoard(board, color);
+        }
     }
 }

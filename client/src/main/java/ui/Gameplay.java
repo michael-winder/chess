@@ -21,22 +21,22 @@ public class Gameplay {
     private static final String EMPTY = "   ";
     private static final String[] whiteHeader = {"  ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
     private static final String[] blackHeader = {"  ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
-    private static final String[] whiteRows = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
-    private static final String[] blackRows = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
+    private static final String[] blackRows = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    private static final String[] whiteRows = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
     private static final String[] whitePieces = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
-    public static void main(String[] args) {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        out.print(ERASE_SCREEN);
-
-        drawHeaders(out, ChessGame.TeamColor.WHITE);
-        drawChessBoard(out, board, ChessGame.TeamColor.WHITE);
-        drawHeaders(out, ChessGame.TeamColor.WHITE);
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
-    }
+//    public static void main(String[] args) {
+//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+//        ChessBoard board = new ChessBoard();
+//        board.resetBoard();
+//        out.print(ERASE_SCREEN);
+//
+//        drawHeaders(out, ChessGame.TeamColor.WHITE);
+//        drawChessBoard(out, board, ChessGame.TeamColor.WHITE);
+//        drawHeaders(out, ChessGame.TeamColor.WHITE);
+//        out.print(SET_BG_COLOR_BLACK);
+//        out.print(SET_TEXT_COLOR_WHITE);
+//    }
 
     public static void drawBoard(ChessBoard board, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -52,10 +52,10 @@ public class Gameplay {
 
     private static void drawHeaders(PrintStream out, ChessGame.TeamColor color) {
         String[] header;
-        if (color == ChessGame.TeamColor.WHITE){
-            header = whiteHeader;
-        } else {
+        if (color == ChessGame.TeamColor.BLACK){
             header = blackHeader;
+        } else {
+            header = whiteHeader;
         }
         setGray(out);
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
@@ -80,18 +80,18 @@ public class Gameplay {
 
     private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
         String[] rows;
-        if (color == ChessGame.TeamColor.WHITE){
-            rows = whiteRows;
-        } else {
+        if (color == ChessGame.TeamColor.BLACK){
             rows = blackRows;
+        } else {
+            rows = whiteRows;
         }
         boolean startColor;
         String[][] boardStrings = pieceConverter(board, color);
         for (int boardRow = 0; boardRow < 8; ++boardRow) {
-            if (color == ChessGame.TeamColor.WHITE){
-                startColor = boardRow % 2 == 1;
-            } else {
+            if (color == ChessGame.TeamColor.BLACK){
                 startColor = boardRow % 2 == 0;
+            } else {
+                startColor = boardRow % 2 == 1;
             }
             drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow]);
         }

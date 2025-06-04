@@ -16,13 +16,13 @@ import static ui.EscapeSequences.*;
 public class Gameplay {
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
 
     // Padded characters.
     private static final String EMPTY = "   ";
-    private static final String[] header = {"  ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
-    private static final String[] rows = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    private static final String[] whiteHeader = {"  ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+    private static final String[] blackHeader = {"  ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
+    private static final String[] whiteRows = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    private static final String[] blackRows = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
     private static final String[] whitePieces = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
     public static void main(String[] args) {
@@ -31,30 +31,35 @@ public class Gameplay {
         board.resetBoard();
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
-        drawChessBoard(out, board);
-        drawHeaders(out);
+        drawHeaders(out, ChessGame.TeamColor.WHITE);
+        drawChessBoard(out, board, ChessGame.TeamColor.WHITE);
+        drawHeaders(out, ChessGame.TeamColor.WHITE);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    public static void drawBoard(ChessBoard board) {
+    public static void drawBoard(ChessBoard board, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
-        drawChessBoard(out, board);
-        drawHeaders(out);
+        drawHeaders(out, color);
+        drawChessBoard(out, board, color);
+        drawHeaders(out, color);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out) {
-
+    private static void drawHeaders(PrintStream out, ChessGame.TeamColor color) {
+        String[] header;
+        if (color == ChessGame.TeamColor.WHITE){
+            header = whiteHeader;
+        } else {
+            header = blackHeader;
+        }
         setGray(out);
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            drawHeader(out, header[boardCol]);
+            printHeaderText(out, header[boardCol]);
 
             if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
                 out.print("  ");
@@ -62,10 +67,6 @@ public class Gameplay {
         }
 
         out.println();
-    }
-
-    private static void drawHeader(PrintStream out, String headerText) {
-        printHeaderText(out, headerText);
     }
 
     private static void printHeaderText(PrintStream out, String player) {
@@ -77,10 +78,21 @@ public class Gameplay {
         setGray(out);
     }
 
-    private static void drawChessBoard(PrintStream out, ChessBoard board) {
-        String[][] boardStrings = pieceConverter(board);
+    private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
+        String[] rows;
+        if (color == ChessGame.TeamColor.WHITE){
+            rows = whiteRows;
+        } else {
+            rows = blackRows;
+        }
+        boolean startColor;
+        String[][] boardStrings = pieceConverter(board, color);
         for (int boardRow = 0; boardRow < 8; ++boardRow) {
-            boolean startColor = boardRow % 2 == 1;
+            if (color == ChessGame.TeamColor.WHITE){
+                startColor = boardRow % 2 == 1;
+            } else {
+                startColor = boardRow % 2 == 0;
+            }
             drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow]);
         }
     }
@@ -116,11 +128,6 @@ public class Gameplay {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    private static void setRed(PrintStream out) {
-        out.print(SET_BG_COLOR_RED);
-        out.print(SET_TEXT_COLOR_RED);
-    }
-
     private static void setGray(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_LIGHT_GREY);
@@ -131,13 +138,17 @@ public class Gameplay {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static String[][] pieceConverter(ChessBoard board) {
+    private static String[][] pieceConverter(ChessBoard board, ChessGame.TeamColor color) {
         String[][] boardStrings = new String[8][8];
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
-                boardStrings[row - 1][col - 1] = pieceIntoString(piece);
+                if (color == ChessGame.TeamColor.BLACK) {
+                    boardStrings[row - 1][col - 1] = pieceIntoString(piece);
+                } else {
+                    boardStrings[8 - row][8 - col] = pieceIntoString(piece);
+                }
             }
         }
         return boardStrings;

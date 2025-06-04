@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.sun.nio.sctp.NotificationHandler;
 
 import java.util.Objects;
@@ -67,6 +68,6 @@ public class Repl{
 
     private void gameplayUI(Scanner scanner){
         ChessBoard board = new ChessBoard();
-        Gameplay.drawBoard(board);
+        Gameplay.drawBoard(board, ChessGame.TeamColor.BLACK);
     }
 }

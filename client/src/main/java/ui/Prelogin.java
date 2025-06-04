@@ -32,14 +32,14 @@ public class Prelogin {
                 help - to see possible commands
                 """;
         if(params.length >= 1){
-            return "Invalid input. Please type one of the following commands:" + response;
+            return "Invalid input. Please type one of the following commands:\n" + response;
         }
         return response;
     }
 
     public String register(String... params){
         if (params.length != 3){
-            return "Invalid registration. Use format: register <USERNAME> <PASSWORD> <EMAIL>";
+            return "Invalid registration. Use format: register <USERNAME> <PASSWORD> <EMAIL>\n";
         }
         RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
         RegisterResponse response = serverFacade.register(request);
@@ -49,7 +49,7 @@ public class Prelogin {
 
     public String login(String... params){
         if (params.length != 2){
-            return "Invalid login request. Use format: login <USERNAME> <PASSWORD>";
+            return "Invalid login request. Use format: login <USERNAME> <PASSWORD>\n";
         }
         LoginRequest request = new LoginRequest(params[0], params[1]);
         LoginResponse response = serverFacade.login(request);

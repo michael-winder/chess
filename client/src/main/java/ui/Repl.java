@@ -24,7 +24,11 @@ public class Repl{
                 }
             } catch (Throwable e){
                 var msg = e.toString();
-                System.out.print(msg);
+                if (Objects.equals(msg, "exception.ResponseException: Error: already taken")){
+                    System.out.print("That username is already taken. Try a different one!\n");
+                } else {
+                    System.out.print("Invalid login credentials! Try again:\n");
+                }
             }
         }
         Postlogin postlogin = new Postlogin(authToken);
@@ -38,7 +42,12 @@ public class Repl{
                 }
             } catch (Throwable e){
                 var msg = e.toString();
-                System.out.print(msg);
+                if (Objects.equals(msg, "exception.ResponseException: Error: bad request") ||
+                    e instanceof NumberFormatException){
+                    System.out.print("That is not a valid game ID. Please type a valid game ID\n");
+                } else {
+                    System.out.print(msg);
+                }
             }
         }
     }

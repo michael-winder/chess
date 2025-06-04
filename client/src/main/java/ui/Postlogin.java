@@ -42,9 +42,6 @@ public class Postlogin {
                 quit - to stop playing chess
                 help - to see possible commands
                 """;
-        if(params.length >= 1){
-            return "Invalid input. Please type one of the following commands:" + response;
-        }
         return response;
     }
 
@@ -71,8 +68,9 @@ public class Postlogin {
         }
         ListResponse response = serverFacade.listGames(authToken);
         StringBuilder gameString = new StringBuilder();
+        gameString.append("ID:   GAME NAME:\n");
         for(GameData game : response.games()){
-            gameString.append(game.gameName()).append("\n");
+            gameString.append(game.gameID()).append("     ").append(game.gameName()).append("\n");
         }
         return gameString.toString();
     }
@@ -87,7 +85,7 @@ public class Postlogin {
         } else if (Objects.equals(params[1], "black")){
             color = ChessGame.TeamColor.BLACK;
         } else {
-            return "Invalid color";
+            return "Invalid color\n";
         }
         JoinRequest request = new JoinRequest(color, Integer.parseInt(params[0]));
         serverFacade.joinGame(request, authToken);
@@ -98,6 +96,8 @@ public class Postlogin {
         if (params.length != 1){
             return "Invalid observe game request. Please use the format: observe <GAME ID>\n";
         }
+        JoinRequest request = new JoinRequest(null, Integer.parseInt(params[0]));
+        serverFacade.joinGame(request, authToken);
         return "Observing!\n";
     }
 }

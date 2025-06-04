@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import com.sun.nio.sctp.NotificationHandler;
 
 import java.util.Objects;
@@ -7,6 +8,7 @@ import java.util.Scanner;
 
 public class Repl{
     Prelogin prelogin = new Prelogin();
+    Gameplay gameplay = new Gameplay();
     public boolean loginStatus = false;
     String authToken;
     public void run(){
@@ -61,5 +63,10 @@ public class Repl{
                 }
             }
         }
+    }
+
+    private void gameplayUI(Scanner scanner){
+        ChessBoard board = new ChessBoard();
+        Gameplay.drawBoard(board);
     }
 }

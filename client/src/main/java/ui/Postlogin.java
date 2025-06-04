@@ -8,10 +8,12 @@ import responses.ListResponse;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Postlogin {
     private final String authToken;
+    private HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
     public Postlogin (String authToken){
         this.authToken = authToken;
     }
@@ -68,16 +70,19 @@ public class Postlogin {
         }
         ListResponse response = serverFacade.listGames(authToken);
         StringBuilder gameString = new StringBuilder();
-        gameString.append("ID:   GAME NAME:\n");
+        gameString.append("GAME NUMBER:    GAME NAME:\n");
+        int i = 1;
         for(GameData game : response.games()){
-            gameString.append(game.gameID()).append("     ").append(game.gameName()).append("\n");
+            gameString.append(i).append("               ").append(game.gameName()).append("\n");
+            gameIDs.put(i, game.gameID());
+            i++;
         }
         return gameString.toString();
     }
 
     public String join(String... params){
         if (params.length != 2){
-            return "Invalid join game request. Please use the format: join <GAME ID> [WHITE|BLACK]\n";
+            return "Invalid join game request. Please use the format: join <GAME NUMBER> [WHITE|BLACK]\n";
         }
         ChessGame.TeamColor color;
         if (Objects.equals(params[1], "white")){
@@ -87,16 +92,19 @@ public class Postlogin {
         } else {
             return "Invalid color\n";
         }
-        JoinRequest request = new JoinRequest(color, Integer.parseInt(params[0]));
+        JoinRequest request = new JoinRequest(color, gameIDs.get(Integer.parseInt(params[0])));
         serverFacade.joinGame(request, authToken);
         return "Joined!\n";
     }
+    /*
+    try creating a class that stores game id and game number and use that to join and observe
+     */
 
     public String observe(String... params){
         if (params.length != 1){
-            return "Invalid observe game request. Please use the format: observe <GAME ID>\n";
+            return "Invalid observe game request. Please use the format: observe <GAME NUMBER>\n";
         }
-        JoinRequest request = new JoinRequest(null, Integer.parseInt(params[0]));
+        JoinRequest request = new JoinRequest(null, gameIDs.get(Integer.parseInt(params[0])));
         serverFacade.joinGame(request, authToken);
         return "Observing!\n";
     }

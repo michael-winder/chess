@@ -54,6 +54,8 @@ public class Repl{
                 if (Objects.equals(msg, "exception.ResponseException: Error: bad request") ||
                         e instanceof NumberFormatException){
                     System.out.print("That is not a valid game ID. Please type a valid game ID\n");
+                } else if (Objects.equals(msg, "exception.ResponseException: Error: already taken")){
+                    System.out.print("That color is already taken!\n");
                 } else {
                     System.out.print(msg);
                 }

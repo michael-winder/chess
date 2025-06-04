@@ -2,13 +2,16 @@ package ui;
 
 import requests.LoginRequest;
 import requests.RegisterRequest;
+import responses.LoginResponse;
 import responses.RegisterResponse;
 import server.ServerFacade;
-
+import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Prelogin {
     public final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    public String authToken = null;
     public String eval(String input){
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -40,6 +43,7 @@ public class Prelogin {
         }
         RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
         RegisterResponse response = serverFacade.register(request);
+        authToken = response.authToken();
         return "Registered!\n";
     }
 
@@ -48,7 +52,8 @@ public class Prelogin {
             return "Invalid login request. Use format: login <USERNAME> <PASSWORD>";
         }
         LoginRequest request = new LoginRequest(params[0], params[1]);
-        serverFacade.login(request);
+        LoginResponse response = serverFacade.login(request);
+        authToken = response.authToken();
         return "Logged in!\n";
     }
 

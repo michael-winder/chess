@@ -75,10 +75,12 @@ public class Postlogin {
         }
         ListResponse response = serverFacade.listGames(authToken);
         StringBuilder gameString = new StringBuilder();
-        gameString.append("GAME NUMBER:    GAME NAME:\n");
+        gameString.append("GAME NUMBER:    GAME NAME:      WHITE USERNAME:     BLACK USERNAME:\n");
         int i = 1;
         for(GameData game : response.games()){
-            gameString.append(i).append("               ").append(game.gameName()).append("\n");
+            gameString.append(i).append("               ").append(game.gameName());
+            gameString.append("           ").append(game.whiteUsername());
+            gameString.append("             ").append(game.blackUsername()).append("\n");
             gameIDs.put(i, game.gameID());
             i++;
         }

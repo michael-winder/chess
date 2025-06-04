@@ -53,6 +53,7 @@ public class Repl{
     }
 
     private void postLoginUI(Scanner scanner, Postlogin postlogin){
+        System.out.print(postlogin.help(new String[0]));
         String result = "";
         while(!result.equals("quit") && loginStatus){
             String line = scanner.nextLine();

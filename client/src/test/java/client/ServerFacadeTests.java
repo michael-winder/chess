@@ -30,22 +30,21 @@ import java.util.Objects;
 
 
 public class ServerFacadeTests {
-    static UserSQLAccess userSQLAccess ;
     private static Server server;
-    private final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    private static ServerFacade serverFacade;
 
 
     @BeforeAll
     public static void init() throws DataAccessException{
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        userSQLAccess = new UserSQLAccess();
+        serverFacade = new ServerFacade("http://localhost:" + port);
     }
 
     @AfterEach
     public void cleanup()throws DataAccessException{
-        userSQLAccess.deleteAllUsers();
+        serverFacade.clear();
     }
 
     @AfterAll
@@ -70,6 +69,11 @@ public class ServerFacadeTests {
         registerUser("Jake", "password", "email");
         serverFacade.clear();
         assertThrows(Exception.class, () -> loginUser("Jake", "pass"));
+    }
+
+    @Test
+    public void clearFailed(){
+        assertDoesNotThrow(serverFacade::clear);
     }
 
     @Test

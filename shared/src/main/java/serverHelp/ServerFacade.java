@@ -1,4 +1,4 @@
-package server;
+package serverHelp;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import requests.*;

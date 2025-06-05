@@ -1,6 +1,5 @@
 import chess.*;
-import server.Server;
-import service.UserService;
+import serverHelp.Server;
 
 public class Main {
     public static void main(String[] args) {

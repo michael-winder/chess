@@ -1,4 +1,4 @@
-package server;
+package serverHelp;
 
 import dataaccess.*;
 import exception.BadRequestException;
@@ -6,7 +6,6 @@ import exception.ResponseException;
 import exception.UnauthorizedException;
 import handlers.*;
 import handlers.ExceptionHandler;
-import service.UserService;
 import spark.*;
 import exception.AlreadyTakenException;
 

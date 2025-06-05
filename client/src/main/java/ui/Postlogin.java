@@ -5,9 +5,8 @@ import chess.ChessGame;
 import model.GameData;
 import requests.CreateRequest;
 import requests.JoinRequest;
-import responses.JoinResponse;
 import responses.ListResponse;
-import server.ServerFacade;
+import serverHelp.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;

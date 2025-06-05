@@ -1,7 +1,6 @@
 package client;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
 import model.GameData;
@@ -14,19 +13,10 @@ import responses.CreateResponse;
 import responses.ListResponse;
 import responses.LoginResponse;
 import responses.RegisterResponse;
-import server.Server;
-import server.ServerFacade;
-
-import javax.xml.crypto.Data;
+import serverHelp.Server;
+import serverHelp.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 
 public class ServerFacadeTests {

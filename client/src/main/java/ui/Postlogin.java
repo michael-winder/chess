@@ -126,8 +126,9 @@ public class Postlogin {
             return "Invalid observe game request. Please use the format: observe <GAME NUMBER>\n";
         }
         list(new String[0]);
-//        JoinRequest request = new JoinRequest(null, gameIDs.get(Integer.parseInt(params[0])));
-//        serverFacade.joinGame(request, authToken);
+        if (!gameIDs.containsKey(Integer.parseInt(params[0]))){
+            return "That game does not exist. Please try again with a valid game\n";
+        }
         return "Observing!\n";
     }
 }

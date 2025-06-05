@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Repl{
-    Prelogin prelogin = new Prelogin();
+    Prelogin prelogin;
     Gameplay gameplay = new Gameplay();
     public boolean loginStatus = false;
     public boolean joinStatus = false;
@@ -16,12 +16,19 @@ public class Repl{
     public ChessGame.TeamColor color;
     public ChessBoard board;
     String authToken;
+    String url;
+
+    public Repl (String url){
+        this.url = url;
+        this.prelogin = new Prelogin(url);
+    }
+
     public void run(){
         System.out.println("WELCOME TO THE MOST EPIC CHESS GAME EVER! Type help to get started.");
         Scanner scanner = new Scanner(System.in);
         while (!quitStatus) {
             preLoginUI(scanner);
-            Postlogin postlogin = new Postlogin(authToken);
+            Postlogin postlogin = new Postlogin(authToken, url);
             postLoginUI(scanner, postlogin);
             gameplayUI(scanner, postlogin.globalColor);
         }

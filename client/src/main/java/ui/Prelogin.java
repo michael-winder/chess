@@ -10,8 +10,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Prelogin {
-    public final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    public ServerFacade serverFacade;
     public String authToken = null;
+    String url;
+
+    public Prelogin(String url){
+        this.url = url;
+        serverFacade = new ServerFacade(url);
+    }
+
     public String eval(String input){
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";

@@ -25,19 +25,6 @@ public class Gameplay {
     private static final String[] whiteRows = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
     private static final String[] whitePieces = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
-//    public static void main(String[] args) {
-//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-//        ChessBoard board = new ChessBoard();
-//        board.resetBoard();
-//        out.print(ERASE_SCREEN);
-//
-//        drawHeaders(out, ChessGame.TeamColor.WHITE);
-//        drawChessBoard(out, board, ChessGame.TeamColor.WHITE);
-//        drawHeaders(out, ChessGame.TeamColor.WHITE);
-//        out.print(SET_BG_COLOR_BLACK);
-//        out.print(SET_TEXT_COLOR_WHITE);
-//    }
-
     public static void drawBoard(ChessBoard board, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 

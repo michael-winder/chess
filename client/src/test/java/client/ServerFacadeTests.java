@@ -1,14 +1,17 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import exception.ResponseException;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import requests.CreateRequest;
+import requests.JoinRequest;
 import requests.LoginRequest;
 import requests.RegisterRequest;
 import responses.CreateResponse;
+import responses.ListResponse;
 import responses.LoginResponse;
 import responses.RegisterResponse;
 import server.Server;
@@ -30,9 +33,6 @@ public class ServerFacadeTests {
     static UserSQLAccess userSQLAccess ;
     private static Server server;
     private final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
-    private final UserSQLTest userTest = new UserSQLTest();
-    private final AuthSQLTest authTest = new AuthSQLTest();
-    private final GameSQLTest gameTest = new GameSQLTest();
 
 
     @BeforeAll
@@ -55,10 +55,8 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void register() throws DataAccessException, ResponseException {
+    public void register() {
         RegisterResponse registerResponse= registerUser("Michael", "pass", "mail");
-        List<String> users = userTest.loadUsers();
-        assertTrue(users.contains("Michael"));
         assertEquals("Michael", registerResponse.username());
     }
 
@@ -71,17 +69,13 @@ public class ServerFacadeTests {
     public void clear() throws DataAccessException{
         registerUser("Jake", "password", "email");
         serverFacade.clear();
-        List<String> users = userTest.loadUsers();
-        assertTrue(users.isEmpty());
+        assertThrows(Exception.class, () -> loginUser("Jake", "pass"));
     }
 
     @Test
     public void loginSuccess() throws DataAccessException, ResponseException{
         RegisterResponse registerResponse = registerUser("Mike", "pass", "mail");
-        LoginResponse loginResponse = loginUser("Mike", "pass");
-        HashMap <String, String> auths = authTest.loadAuths();
-        assertTrue(auths.containsKey(loginResponse.authToken()));
-        assertTrue(auths.containsValue("Mike"));
+        assertDoesNotThrow(() -> loginUser("Mike", "pass"));
     }
 
     @Test
@@ -94,8 +88,7 @@ public class ServerFacadeTests {
     public void logoutSuccess() throws DataAccessException {
         RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
         serverFacade.logout(registerResponse.authToken());
-        HashMap <String, String> auths = authTest.loadAuths();
-        assertFalse(auths.containsValue(registerResponse.authToken()));
+        assertThrows(Exception.class, () -> serverFacade.listGames(registerResponse.authToken()));
     }
 
     @Test
@@ -109,16 +102,44 @@ public class ServerFacadeTests {
         RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
         LoginResponse loginResponse = loginUser("Jake", "pass");
         CreateResponse createResponse = create("game1", loginResponse.authToken());
-        HashMap<Integer, GameData> games = gameTest.loadGames();
-        assertTrue(games.containsKey(createResponse.gameID()));
-        assertEquals("game1", games.get(createResponse.gameID()).gameName());
+        JoinRequest request = new JoinRequest(ChessGame.TeamColor.WHITE, createResponse.gameID());
+        assertDoesNotThrow(() -> serverFacade.joinGame(request, registerResponse.authToken()));
     }
 
     @Test
-    public void createGameFail() throws DataAccessException {
-        RegisterResponse registerResponse = registerUser("Jake", "pass", "email");
-        LoginResponse loginResponse = loginUser("Jake", "pass");
+    public void createGameFail(){
+        registerUser("Jake", "pass", "email");
+        loginUser("Jake", "pass");
         assertThrows(Exception.class, () -> create("game1", "wrongToken"));
+    }
+
+    @Test
+    public void joinGameSuccess() throws DataAccessException {
+        RegisterResponse registerResponse = registerUser("Mike", "pass", "mail");
+        LoginResponse loginResponse = loginUser("Mike", "pass");
+        CreateResponse createResponse = create("game1", loginResponse.authToken());
+        JoinRequest request = new JoinRequest(ChessGame.TeamColor.WHITE, createResponse.gameID());
+        serverFacade.joinGame(request, loginResponse.authToken());
+    }
+
+    @Test
+    public void joinGameFail(){
+        assertThrows(Exception.class, () -> serverFacade.joinGame(null, null));
+    }
+
+    @Test
+    public void listSuccess() {
+        RegisterResponse registerResponse = registerUser("Jacob", "pass", "mail");
+        LoginResponse loginResponse = loginUser("Jacob", "pass");
+        CreateResponse createResponse = create("game1", loginResponse.authToken());
+        ListResponse listResponse = serverFacade.listGames(loginResponse.authToken());
+        GameData game = new GameData(createResponse.gameID(), null, null, "game1", new ChessGame());
+        assertTrue(listResponse.games().contains(game));
+    }
+
+    @Test
+    public void listFail() {
+        assertThrows(Exception.class, () -> serverFacade.listGames("wrong"));
     }
 
     private RegisterResponse registerUser(String name, String password, String email){

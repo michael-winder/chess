@@ -16,14 +16,16 @@ public class Postlogin {
     private final String authToken;
     public ChessGame.TeamColor globalColor = null;
     public ChessBoard board;
-
-
+    String url;
+    public final ServerFacade serverFacade;
     private HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
-    public Postlogin (String authToken){
+
+    public Postlogin(String authToken, String url){
+        this.url = url;
         this.authToken = authToken;
+        this.serverFacade = new ServerFacade(url);
     }
 
-    public final ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
     public String eval(String input){
         var tokens = input.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "help";

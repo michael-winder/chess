@@ -49,7 +49,8 @@ public class GameService {
         }
         if (request.gameID() == null || gameAccess.getGame(request.gameID()) == null || request.playerColor() == null ||
                 (request.playerColor() != ChessGame.TeamColor.WHITE &&
-                        request.playerColor() != ChessGame.TeamColor.BLACK)){
+                        request.playerColor() != ChessGame.TeamColor.BLACK
+                        )){
             throw new BadRequestException(400, "Error: bad request");
         }
         GameData gameData = gameAccess.getGame(request.gameID());

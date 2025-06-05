@@ -47,7 +47,9 @@ public class GameService {
         if (authAccess.getAuth(authToken) == null){
             throw new UnauthorizedException(401, "Error: unauthorized");
         }
-        if (request.gameID() == null || gameAccess.getGame(request.gameID()) == null){
+        if (request.gameID() == null || gameAccess.getGame(request.gameID()) == null || request.playerColor() == null ||
+                (request.playerColor() != ChessGame.TeamColor.WHITE &&
+                        request.playerColor() != ChessGame.TeamColor.BLACK)){
             throw new BadRequestException(400, "Error: bad request");
         }
         GameData gameData = gameAccess.getGame(request.gameID());

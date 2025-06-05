@@ -8,6 +8,7 @@ import requests.JoinRequest;
 import responses.JoinResponse;
 import responses.ListResponse;
 import server.ServerFacade;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
@@ -17,7 +18,7 @@ public class Postlogin {
     public ChessGame.TeamColor globalColor = null;
     public ChessBoard board;
     String url;
-    public final ServerFacade serverFacade;
+    public ServerFacade serverFacade;
     private HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
 
     public Postlogin(String authToken, String url){

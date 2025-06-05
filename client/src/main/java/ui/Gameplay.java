@@ -19,11 +19,10 @@ public class Gameplay {
 
     // Padded characters.
     private static final String EMPTY = "   ";
-    private static final String[] whiteHeader = {"  ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
-    private static final String[] blackHeader = {"  ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
-    private static final String[] blackRows = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
-    private static final String[] whiteRows = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
-    private static final String[] whitePieces = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
+    private static final String[] WHITE_HEADER = {"  ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+    private static final String[] BLACK_HEADER = {"  ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
+    private static final String[] BLACK_ROWS = {" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "};
+    private static final String[] WHITE_ROWS = {" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "};
 
     public static void drawBoard(ChessBoard board, ChessGame.TeamColor color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -40,9 +39,9 @@ public class Gameplay {
     private static void drawHeaders(PrintStream out, ChessGame.TeamColor color) {
         String[] header;
         if (color == ChessGame.TeamColor.BLACK){
-            header = blackHeader;
+            header = BLACK_HEADER;
         } else {
-            header = whiteHeader;
+            header = WHITE_HEADER;
         }
         setGray(out);
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
@@ -68,9 +67,9 @@ public class Gameplay {
     private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
         String[] rows;
         if (color == ChessGame.TeamColor.BLACK){
-            rows = blackRows;
+            rows = BLACK_ROWS;
         } else {
-            rows = whiteRows;
+            rows = WHITE_ROWS;
         }
         boolean startColor;
         String[][] boardStrings = pieceConverter(board, color);

@@ -42,7 +42,7 @@ public class Repl{
                 result = prelogin.eval(line);
                 System.out.print(result);
                 authToken = prelogin.authToken;
-                if (Objects.equals(result, "Logged in!\n")){
+                if (Objects.equals(result, "Logged in!\n") || Objects.equals(result, "Registered!\n")){
                     loginStatus = true;
                 }
             } catch (Throwable e){

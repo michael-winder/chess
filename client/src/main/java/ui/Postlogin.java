@@ -77,16 +77,29 @@ public class Postlogin {
         }
         ListResponse response = serverFacade.listGames(authToken);
         StringBuilder gameString = new StringBuilder();
-        gameString.append("GAME NUMBER:    GAME NAME:      WHITE USERNAME:     BLACK USERNAME:\n");
-        int i = 1;
+        gameString.append("GAME NUMBER:        GAME NAME:          WHITE USERNAME:     BLACK USERNAME:\n");
+        Integer i = 1;
         for(GameData game : response.games()){
-            gameString.append(i).append("               ").append(game.gameName());
-            gameString.append("           ").append(game.whiteUsername());
-            gameString.append("             ").append(game.blackUsername()).append("\n");
+            String gameNum = padRight(i.toString());
+            String gameName = padRight(game.gameName());
+            String whiteUsername = padRight(game.whiteUsername());
+            String blackUsername = padRight(game.blackUsername());
+            gameString.append(gameNum).append(gameName).append(whiteUsername).append(blackUsername).append("\n");
             gameIDs.put(i, game.gameID());
             i++;
         }
         return gameString.toString();
+    }
+
+    private String padRight(String string){
+        if (string == null){
+            string = " ";
+        }
+        StringBuilder stringBuilder = new StringBuilder(string);
+        while(stringBuilder.length() < 20){
+            stringBuilder.append(" ");
+        }
+        return stringBuilder.toString();
     }
 
     public String join(String... params){

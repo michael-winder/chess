@@ -74,11 +74,7 @@ public class Gameplay {
         boolean startColor;
         String[][] boardStrings = pieceConverter(board, color);
         for (int boardRow = 0; boardRow < 8; ++boardRow) {
-            if (color == ChessGame.TeamColor.BLACK){
-                startColor = boardRow % 2 == 0;
-            } else {
-                startColor = boardRow % 2 == 1;
-            }
+            startColor = boardRow % 2 == 1;
             drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow]);
         }
     }
@@ -126,17 +122,20 @@ public class Gameplay {
 
     private static String[][] pieceConverter(ChessBoard board, ChessGame.TeamColor color) {
         String[][] boardStrings = new String[8][8];
+
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
                 if (color == ChessGame.TeamColor.BLACK) {
-                    boardStrings[row - 1][col - 1] = pieceIntoString(piece);
+                    boardStrings[row - 1][8 - col] = pieceIntoString(piece);
                 } else {
-                    boardStrings[8 - row][8 - col] = pieceIntoString(piece);
+                    boardStrings[8 - row][col - 1] = pieceIntoString(piece);
                 }
+
             }
         }
+
         return boardStrings;
     }
 

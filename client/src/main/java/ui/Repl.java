@@ -9,7 +9,6 @@ import java.util.Scanner;
 
 public class Repl{
     Prelogin prelogin;
-    Gameplay gameplay = new Gameplay();
     public boolean loginStatus = false;
     public boolean joinStatus = false;
     public boolean quitStatus = false;
@@ -95,7 +94,7 @@ public class Repl{
         if (joinStatus) {
             ChessBoard board = new ChessBoard();
             board.resetBoard();
-            Gameplay.drawBoard(board, color);
+            BoardDrawer.drawBoard(board, color);
         }
     }
 }

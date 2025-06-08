@@ -25,11 +25,11 @@ public class Gameplay {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd){
-            case "redraw" -> redraw(params);
-            case "leave" -> leave(params);
-            case "make move" -> makeMove(params);
-            case "resign" -> resign(params);
-            case "highlight" -> highlight(params);
+//            case "redraw" -> redraw(params);
+//            case "leave" -> leave(params);
+//            case "make move" -> makeMove(params);
+//            case "resign" -> resign(params);
+//            case "highlight" -> highlight(params);
             default -> help();
         };
     }

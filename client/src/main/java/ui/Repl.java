@@ -3,11 +3,14 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import com.sun.nio.sctp.NotificationHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Repl{
+import static java.awt.Color.BLUE;
+
+public class Repl implements client.websocket.NotificationHandler {
     Prelogin prelogin;
     public boolean loginStatus = false;
     public boolean joinStatus = false;
@@ -27,8 +30,9 @@ public class Repl{
         Scanner scanner = new Scanner(System.in);
         while (!quitStatus) {
             preLoginUI(scanner);
-            Postlogin postlogin = new Postlogin(authToken, url);
+            Postlogin postlogin = new Postlogin(authToken, url, this);
             postLoginUI(scanner, postlogin);
+            board = postlogin.currentGame.getBoard();
             gameplayUI(scanner, postlogin.globalColor);
         }
     }
@@ -92,9 +96,18 @@ public class Repl{
 
     private void gameplayUI(Scanner scanner, ChessGame.TeamColor color){
         if (joinStatus) {
-            ChessBoard board = new ChessBoard();
-            board.resetBoard();
+            this.color = color;
             BoardDrawer.drawBoard(board, color);
+        }
+    }
+
+    public void notify(ServerMessage message) {
+        if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            BoardDrawer.drawBoard(board, color);
+        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
+            System.out.println(message);
+        } else {
+            System.out.println("Error");
         }
     }
 }

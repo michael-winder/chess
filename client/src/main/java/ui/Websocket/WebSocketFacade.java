@@ -9,18 +9,19 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import client.websocket.NotificationHandler;
 
 
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    MessageHandler messageHandler;
+    NotificationHandler notificationHandler;
 
-    public WebSocketFacade(String url, MessageHandler messageHandler) throws ResponseException {
+    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
-            this.messageHandler = messageHandler;
+            this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -30,7 +31,7 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    messageHandler.notify(serverMessage);
+                    notificationHandler.notify(serverMessage);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

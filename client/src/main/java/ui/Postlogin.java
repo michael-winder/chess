@@ -7,10 +7,11 @@ import requests.CreateRequest;
 import requests.JoinRequest;
 import responses.ListResponse;
 import serverHelp.ServerFacade;
+import ui.Websocket.WebSocketFacade;
+import client.websocket.NotificationHandler;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Objects;
+import java.net.http.WebSocket;
+import java.util.*;
 
 public class Postlogin {
     private final String authToken;
@@ -18,12 +19,17 @@ public class Postlogin {
     public ChessBoard board;
     String url;
     public ServerFacade serverFacade;
-    private HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
+    public NotificationHandler notificationHandler;
+    private final HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
+    private WebSocketFacade ws;
+    public HashMap<Integer, GameData> gameList = new HashMap<Integer, GameData>();
+    public ChessGame currentGame;
 
-    public Postlogin(String authToken, String url){
+    public Postlogin(String authToken, String url, NotificationHandler notificationHandler){
         this.url = url;
         this.authToken = authToken;
         this.serverFacade = new ServerFacade(url);
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input){
@@ -76,6 +82,9 @@ public class Postlogin {
             return "Invalid list request. Please simply type: list\n";
         }
         ListResponse response = serverFacade.listGames(authToken);
+        for (GameData game : response.games()){
+            gameList.put(game.gameID(), game);
+        }
         StringBuilder gameString = new StringBuilder();
         gameString.append("GAME NUMBER:        GAME NAME:          WHITE USERNAME:     BLACK USERNAME:\n");
         Integer i = 1;
@@ -116,8 +125,15 @@ public class Postlogin {
         }
         list(new String[0]);
         globalColor = color;
-        JoinRequest request = new JoinRequest(color, gameIDs.get(Integer.parseInt(params[0])));
+        if (!gameIDs.containsKey(Integer.parseInt(params[0]))){
+            return "Invalid game\n";
+        }
+        int gameID = gameIDs.get(Integer.parseInt(params[0]));
+        JoinRequest request = new JoinRequest(color, gameID);
         serverFacade.joinGame(request, authToken);
+        currentGame = getGame(gameID);
+//        ws = new WebSocketFacade(url, notificationHandler);
+//        ws.connect(authToken, gameID);
         return "Joined!\n";
     }
 
@@ -129,6 +145,14 @@ public class Postlogin {
         if (!gameIDs.containsKey(Integer.parseInt(params[0]))){
             return "That game does not exist. Please try again with a valid game\n";
         }
+        int gameID = gameIDs.get(Integer.parseInt(params[0]));
+        currentGame = getGame(gameID);
+//        ws = new WebSocketFacade(url, notificationHandler);
+//        ws.connect(authToken, gameID);
         return "Observing!\n";
+    }
+
+    public ChessGame getGame(int gameID){
+        return gameList.get(gameID).game();
     }
 }

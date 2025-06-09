@@ -1,4 +1,4 @@
-package serverHelp;
+package server;
 
 import dataaccess.*;
 import exception.BadRequestException;
@@ -8,6 +8,7 @@ import handlers.*;
 import handlers.ExceptionHandler;
 import spark.*;
 import exception.AlreadyTakenException;
+import websocket.WebSocketHandler;
 
 public class Server {
     private final UserDAO userAccess;
@@ -20,6 +21,7 @@ public class Server {
     private final CreateHandler createHandler;
     private final ListHandler listHandler;
     private final JoinHandler joinHandler;
+    private final WebSocketHandler webSocketHandler;
     public Server(){
         try {
             this.userAccess = new UserSQLAccess();
@@ -35,15 +37,14 @@ public class Server {
         this.createHandler = new CreateHandler(userAccess, authAccess, gameAccess);
         this.listHandler = new ListHandler(userAccess, authAccess, gameAccess);
         this.joinHandler = new JoinHandler(userAccess, authAccess, gameAccess);
-
-
+        this.webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
-
+        Spark.webSocket("/ws", webSocketHandler);
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", regHandler::registerUser);
         Spark.delete("/db", clearHandler::clearAll);

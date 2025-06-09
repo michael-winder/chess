@@ -13,7 +13,7 @@ import responses.CreateResponse;
 import responses.ListResponse;
 import responses.LoginResponse;
 import responses.RegisterResponse;
-import serverHelp.Server;
+import server.Server;
 import serverHelp.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;

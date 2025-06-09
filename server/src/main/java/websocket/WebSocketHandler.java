@@ -1,4 +1,4 @@
-package server.websocket;
+package websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
@@ -27,7 +27,7 @@ public class WebSocketHandler {
     }
 
     private void enter(Session session) throws IOException {
-        connections.add("Username",session);
+        connections.add("michael",session);
         var message = String.format("%s is in the shop", "Username");
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast("Username", notification);

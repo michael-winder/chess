@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 import static java.awt.Color.BLUE;
 
-public class Repl implements client.websocket.NotificationHandler {
+public class Repl implements ui.Websocket.NotificationHandler {
     Prelogin prelogin;
     public boolean loginStatus = false;
     public boolean joinStatus = false;

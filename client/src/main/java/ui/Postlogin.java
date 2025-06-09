@@ -8,7 +8,7 @@ import requests.JoinRequest;
 import responses.ListResponse;
 import serverHelp.ServerFacade;
 import ui.Websocket.WebSocketFacade;
-import client.websocket.NotificationHandler;
+import ui.Websocket.NotificationHandler;
 
 import java.net.http.WebSocket;
 import java.util.*;

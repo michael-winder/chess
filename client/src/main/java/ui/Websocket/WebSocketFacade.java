@@ -9,7 +9,7 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import client.websocket.NotificationHandler;
+import ui.Websocket.NotificationHandler;
 
 
 public class WebSocketFacade extends Endpoint {

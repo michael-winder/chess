@@ -24,12 +24,14 @@ public class Postlogin {
     private WebSocketFacade ws;
     public HashMap<Integer, GameData> gameList = new HashMap<Integer, GameData>();
     public ChessGame currentGame;
+    public String username;
 
-    public Postlogin(String authToken, String url, NotificationHandler notificationHandler){
+    public Postlogin(String authToken, String url, NotificationHandler notificationHandler, String username){
         this.url = url;
         this.authToken = authToken;
         this.serverFacade = new ServerFacade(url);
         this.notificationHandler = notificationHandler;
+        this.username = username;
     }
 
     public String eval(String input){
@@ -133,7 +135,7 @@ public class Postlogin {
         serverFacade.joinGame(request, authToken);
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID);
+        ws.connect(authToken, gameID, true, username);
         return "Joined!\n";
     }
 
@@ -148,7 +150,7 @@ public class Postlogin {
         int gameID = gameIDs.get(Integer.parseInt(params[0]));
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID);
+        ws.connect(authToken, gameID, false, username);
         return "Observing!\n";
     }
 

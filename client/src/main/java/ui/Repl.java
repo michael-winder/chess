@@ -3,6 +3,7 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import com.sun.nio.sctp.NotificationHandler;
+import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
 
 import java.util.Objects;
@@ -17,6 +18,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
     public boolean quitStatus = false;
     public ChessGame.TeamColor color;
     public ChessBoard board;
+    public String username;
     String authToken;
     String url;
 
@@ -30,7 +32,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
         Scanner scanner = new Scanner(System.in);
         while (!quitStatus) {
             preLoginUI(scanner);
-            Postlogin postlogin = new Postlogin(authToken, url, this);
+            Postlogin postlogin = new Postlogin(authToken, url, this, username);
             postLoginUI(scanner, postlogin);
             board = postlogin.currentGame.getBoard();
             gameplayUI(scanner, postlogin.globalColor);
@@ -47,6 +49,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
                 authToken = prelogin.authToken;
                 if (Objects.equals(result, "Logged in!\n") || Objects.equals(result, "Registered!\n")){
                     loginStatus = true;
+                    username = prelogin.username;
                 }
             } catch (Throwable e){
                 var msg = e.toString();
@@ -101,11 +104,11 @@ public class Repl implements ui.Websocket.NotificationHandler {
         }
     }
 
-    public void notify(ServerMessage message) {
+    public void notify(JoinNotification message) {
         if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
             BoardDrawer.drawBoard(board, color);
         } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            System.out.println(message);
+            System.out.println(message.message);
         } else {
             System.out.println("Error");
         }

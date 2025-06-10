@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class Prelogin {
     public ServerFacade serverFacade;
     public String authToken = null;
-    String url;
+    public String url;
+    public String username;
 
     public Prelogin(String url){
         this.url = url;
@@ -47,6 +48,7 @@ public class Prelogin {
         if (params.length != 3){
             return "Invalid registration. Use format: register <USERNAME> <PASSWORD> <EMAIL>\n";
         }
+        username = params[0];
         RegisterRequest request = new RegisterRequest(params[0], params[1], params[2]);
         RegisterResponse response = serverFacade.register(request);
         authToken = response.authToken();
@@ -57,6 +59,7 @@ public class Prelogin {
         if (params.length != 2){
             return "Invalid login request. Use format: login <USERNAME> <PASSWORD>\n";
         }
+        username = params[0];
         LoginRequest request = new LoginRequest(params[0], params[1]);
         LoginResponse response = serverFacade.login(request);
         authToken = response.authToken();

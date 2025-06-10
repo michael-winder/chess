@@ -2,6 +2,8 @@ package ui.Websocket;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import websocket.commands.ConnectCommand;
+import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
 
@@ -30,7 +32,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    JoinNotification serverMessage = new Gson().fromJson(message, JoinNotification.class);
                     notificationHandler.notify(serverMessage);
                 }
             });
@@ -43,9 +45,9 @@ public class WebSocketFacade extends Endpoint {
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
 
-    public void connect(String authToken, int gameID) throws ResponseException {
+    public void connect(String authToken, int gameID, boolean join, String username) throws ResponseException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            var command = new ConnectCommand(authToken, gameID, join, username);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

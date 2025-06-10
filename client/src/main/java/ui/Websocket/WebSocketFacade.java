@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
@@ -64,9 +65,9 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void leave(String authToken, int gameID) throws ResponseException {
+    public void leave(String authToken, int gameID, String username) throws ResponseException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID);
+            var command = new LeaveCommand(authToken, gameID, username);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
             this.session.close();
         } catch (IOException ex) {

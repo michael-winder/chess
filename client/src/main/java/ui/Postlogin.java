@@ -21,10 +21,11 @@ public class Postlogin {
     public ServerFacade serverFacade;
     public NotificationHandler notificationHandler;
     private final HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
-    private WebSocketFacade ws;
+    public WebSocketFacade ws;
     public HashMap<Integer, GameData> gameList = new HashMap<Integer, GameData>();
     public ChessGame currentGame;
     public String username;
+    public int gameID;
 
     public Postlogin(String authToken, String url, NotificationHandler notificationHandler, String username){
         this.url = url;
@@ -130,7 +131,7 @@ public class Postlogin {
         if (!gameIDs.containsKey(Integer.parseInt(params[0]))){
             return "Invalid game\n";
         }
-        int gameID = gameIDs.get(Integer.parseInt(params[0]));
+        gameID = gameIDs.get(Integer.parseInt(params[0]));
         JoinRequest request = new JoinRequest(color, gameID);
         serverFacade.joinGame(request, authToken);
         currentGame = getGame(gameID);
@@ -147,7 +148,7 @@ public class Postlogin {
         if (!gameIDs.containsKey(Integer.parseInt(params[0]))){
             return "That game does not exist. Please try again with a valid game\n";
         }
-        int gameID = gameIDs.get(Integer.parseInt(params[0]));
+        gameID = gameIDs.get(Integer.parseInt(params[0]));
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
         ws.connect(authToken, gameID, false, username, null);

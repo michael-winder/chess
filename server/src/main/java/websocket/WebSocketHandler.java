@@ -6,6 +6,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.ConnectCommand;
+import websocket.commands.LeaveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
@@ -22,13 +23,15 @@ public class WebSocketHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
-        ConnectCommand command = new Gson().fromJson(message, ConnectCommand.class);
+        UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
-            case CONNECT -> enter(session, command);
+            case CONNECT -> join(session, message);
+            case LEAVE -> leave(session, message);
         }
     }
 
-    private void enter(Session session, ConnectCommand command) throws IOException {
+    private void join(Session session, String message) throws IOException {
+        ConnectCommand command = new Gson().fromJson(message, ConnectCommand.class);
         connections.add(command.username, session);
         JoinNotification notification;
         if (command.join){
@@ -36,7 +39,15 @@ public class WebSocketHandler {
         } else {
             notification = new JoinNotification(command.username + " is observing the game");
         }
-        String message = new Gson().toJson(notification);
-        connections.broadcast(command.username, message);
+        String serverMessage = new Gson().toJson(notification);
+        connections.broadcast(command.username, serverMessage);
+    }
+
+    private void leave(Session session,  String message) throws IOException {
+        LeaveCommand command = new Gson().fromJson(message, LeaveCommand.class);
+        connections.remove(command.username);
+        JoinNotification notification = new JoinNotification(command.username + " has left the game");
+        String serverMessage = new Gson().toJson(notification);
+        connections.broadcast(command.username, serverMessage);
     }
 }

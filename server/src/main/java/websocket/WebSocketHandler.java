@@ -30,7 +30,12 @@ public class WebSocketHandler {
 
     private void enter(Session session, ConnectCommand command) throws IOException {
         connections.add(command.username, session);
-        var notification = new JoinNotification(command.username + " has joined the game");
+        JoinNotification notification;
+        if (command.join){
+            notification = new JoinNotification(command.username + " has joined the game as " + command.color);
+        } else {
+            notification = new JoinNotification(command.username + " is observing the game");
+        }
         String message = new Gson().toJson(notification);
         connections.broadcast(command.username, message);
     }

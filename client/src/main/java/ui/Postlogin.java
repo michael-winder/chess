@@ -135,7 +135,7 @@ public class Postlogin {
         serverFacade.joinGame(request, authToken);
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID, true, username);
+        ws.connect(authToken, gameID, true, username, globalColor);
         return "Joined!\n";
     }
 
@@ -150,7 +150,7 @@ public class Postlogin {
         int gameID = gameIDs.get(Integer.parseInt(params[0]));
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID, false, username);
+        ws.connect(authToken, gameID, false, username, null);
         return "Observing!\n";
     }
 

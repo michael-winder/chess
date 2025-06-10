@@ -9,7 +9,7 @@ public class Main {
         if (args.length > 0){
             port = args[0];
         } else {
-            port = "8080";
+            port = "8081";
         }
         String url = "http://localhost:" + port;
         new Repl(url).run();

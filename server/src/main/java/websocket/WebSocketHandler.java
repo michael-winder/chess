@@ -30,8 +30,8 @@ public class WebSocketHandler {
 
     private void enter(Session session, ConnectCommand command) throws IOException {
         connections.add(command.username, session);
-        var message = String.format("%s is in the shop", command.username);
-        var notification = new JoinNotification(command.username + "has joined the game");
-        connections.broadcast(command.username, notification);
+        var notification = new JoinNotification(command.username + " has joined the game");
+        String message = new Gson().toJson(notification);
+        connections.broadcast(command.username, message);
     }
 }

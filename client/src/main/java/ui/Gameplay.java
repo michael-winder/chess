@@ -73,10 +73,36 @@ public class Gameplay {
         if (params.length != 3 && !Objects.equals(params[0], "move")){
             return "Invalid make move request. Please use the format: make move <STARTING POSITION> <ENDING POSITION>\n";
         }
-        ChessPosition startPosition = new ChessPosition(2,2);
-        ChessPosition endPosition = new ChessPosition(3, 2);
+        ChessPosition startPosition = moveCreator(params[1]);
+        ChessPosition endPosition = moveCreator(params[2]);
         ChessMove move = new ChessMove(startPosition, endPosition, null);
         ws.makeMove(authToken, gameID, move);
         return "Success!\n";
+    }
+
+    private ChessPosition moveCreator(String moveString){
+        char colChar = moveString.charAt(0);
+        int row = Character.getNumericValue(moveString.charAt(1));
+        int col;
+        if (colChar == 'h'){
+            col = 8;
+        } else if (colChar == 'g'){
+            col = 7;
+        } else if (colChar == 'f'){
+            col = 6;
+        } else if (colChar == 'e'){
+            col = 5;
+        } else if (colChar == 'd'){
+            col = 4;
+        } else if (colChar == 'c'){
+            col = 3;
+        } else if (colChar == 'b'){
+            col = 2;
+        } else if (colChar == 'a'){
+            col = 1;
+        } else {
+            col = 9;
+        }
+        return new ChessPosition(row, col);
     }
 }

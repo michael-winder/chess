@@ -3,19 +3,15 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
-import com.sun.nio.sctp.NotificationHandler;
 import model.GameData;
 import ui.Websocket.WebSocketFacade;
 import websocket.messages.ErrorMesage;
-import websocket.messages.JoinNotification;
+import websocket.messages.NotificationMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
-
-import static java.awt.Color.BLUE;
 
 public class Repl implements ui.Websocket.NotificationHandler {
     Prelogin prelogin;
@@ -119,6 +115,9 @@ public class Repl implements ui.Websocket.NotificationHandler {
             try {
                 result = gameplay.eval(line);
                 System.out.print(result);
+                if (Objects.equals(result, "Redraw request successful!\n")){
+                    BoardDrawer.drawBoard(board, color);
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -131,7 +130,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
             LoadGameMessage gameMessage = new Gson().fromJson(message, LoadGameMessage.class);
             BoardDrawer.drawBoard(gameMessage.game.game().getBoard(), color);
         } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
-            JoinNotification joinMessage = new Gson().fromJson(message, JoinNotification.class);
+            NotificationMessage joinMessage = new Gson().fromJson(message, NotificationMessage.class);
             System.out.println(joinMessage.message);
         } else {
             ErrorMesage errorMesage = new Gson().fromJson(message, ErrorMesage.class);

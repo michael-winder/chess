@@ -1,12 +1,10 @@
 package websocket.messages;
 
-import websocket.commands.UserGameCommand;
-
-public class JoinNotification extends ServerMessage{
+public class NotificationMessage extends ServerMessage{
 
     public String message;
 
-    public JoinNotification(String message){
+    public NotificationMessage(String message){
         super(ServerMessageType.NOTIFICATION);
         this.message = message;
     }

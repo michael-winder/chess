@@ -2,6 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.GameData;
 import serverHelp.ServerFacade;
 import ui.Websocket.WebSocketFacade;
@@ -9,6 +11,7 @@ import ui.Websocket.WebSocketFacade;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Gameplay {
 
@@ -31,9 +34,9 @@ public class Gameplay {
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (cmd){
-//            case "redraw" -> redraw(params);
+            case "redraw" -> redraw(params);
             case "leave" -> leave(params);
-//            case "make move" -> makeMove(params);
+            case "make" -> makeMove(params);
 //            case "resign" -> resign(params);
 //            case "highlight" -> highlight(params);
             default -> help();
@@ -57,5 +60,23 @@ public class Gameplay {
         }
         ws.leave(authToken, gameID);
         return "Left game\n";
+    }
+
+    public String redraw(String... params){
+        if (params.length != 0){
+            return "Invalid redraw request. Please simply type: redraw\n";
+        }
+        return "Redraw request successful!\n";
+    }
+
+    public String makeMove(String... params){
+        if (params.length != 3 && !Objects.equals(params[0], "move")){
+            return "Invalid make move request. Please use the format: make move <STARTING POSITION> <ENDING POSITION>\n";
+        }
+        ChessPosition startPosition = new ChessPosition(2,2);
+        ChessPosition endPosition = new ChessPosition(3, 2);
+        ChessMove move = new ChessMove(startPosition, endPosition, null);
+        ws.makeMove(authToken, gameID, move);
+        return "Success!\n";
     }
 }

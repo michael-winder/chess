@@ -12,7 +12,7 @@ import java.util.zip.CheckedInputStream;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final ChessBoard currentBoard;
+    public ChessBoard currentBoard;
     private int turnTracker;
     public ChessGame() {
         currentBoard = new ChessBoard();

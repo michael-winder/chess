@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import model.GameData;
 import ui.Websocket.WebSocketFacade;
+import websocket.messages.ErrorMesage;
 import websocket.messages.JoinNotification;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
@@ -128,12 +129,13 @@ public class Repl implements ui.Websocket.NotificationHandler {
     public void notify(ServerMessage.ServerMessageType type, String message) {
         if (type == ServerMessage.ServerMessageType.LOAD_GAME){
             LoadGameMessage gameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-            BoardDrawer.drawBoard(gameMessage.gameData.game().getBoard(), color);
+            BoardDrawer.drawBoard(gameMessage.game.game().getBoard(), color);
         } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
             JoinNotification joinMessage = new Gson().fromJson(message, JoinNotification.class);
             System.out.println(joinMessage.message);
         } else {
-            System.out.println("Error");
+            ErrorMesage errorMesage = new Gson().fromJson(message, ErrorMesage.class);
+            System.out.println(errorMesage.errorMessage);
         }
     }
 }

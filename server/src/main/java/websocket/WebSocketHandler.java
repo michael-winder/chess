@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMesage;
 import websocket.messages.JoinNotification;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
@@ -47,6 +48,11 @@ public class WebSocketHandler {
     }
 
     private void join(Session session, UserGameCommand command) throws IOException, DataAccessException {
+        if (authAccess.getAuth(command.getAuthToken()) == null || gameAccess.getGame(command.getGameID()) == null){
+            ErrorMesage errorMesage = new ErrorMesage("Error: invalid credentials");
+            String error = new Gson().toJson(errorMesage);
+            session.getRemote().sendString(error);
+        }
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         GameData gameData = gameAccess.getGame(command.getGameID());
         connections.add(authData.username(), session);

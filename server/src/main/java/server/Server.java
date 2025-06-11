@@ -11,9 +11,9 @@ import exception.AlreadyTakenException;
 import websocket.WebSocketHandler;
 
 public class Server {
-    private final UserDAO userAccess;
-    private final AuthDAO authAccess;
-    private final GameDAO gameAccess;
+    public final UserDAO userAccess;
+    public final AuthDAO authAccess;
+    public final GameDAO gameAccess;
     private final RegisterHandler regHandler;
     private final ClearHandler clearHandler;
     private final LoginHandler loginHandler;

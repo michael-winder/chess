@@ -2,28 +2,27 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import model.GameData;
 import serverHelp.ServerFacade;
 import ui.Websocket.WebSocketFacade;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Gameplay {
 
     private String authToken;
-    public ChessBoard board;
     String url;
     public ServerFacade serverFacade;
     WebSocketFacade ws;
-    public String username;
     public int gameID;
 
-    public Gameplay(String authToken, String url, WebSocketFacade ws, String username, int gameID){
+    public Gameplay(String authToken, String url, WebSocketFacade ws, int gameID){
         this.url = url;
         this.authToken = authToken;
         this.serverFacade = new ServerFacade(url);
         this.ws = ws;
-        this.username = username;
         this.gameID = gameID;
     }
 
@@ -56,7 +55,7 @@ public class Gameplay {
         if (params.length != 0){
             return "Invalid leave request. Please simply type: leave\n";
         }
-        ws.leave(authToken, gameID, username);
+        ws.leave(authToken, gameID);
         return "Left game\n";
     }
 }

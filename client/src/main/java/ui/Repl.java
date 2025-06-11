@@ -3,10 +3,12 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import com.sun.nio.sctp.NotificationHandler;
+import model.GameData;
 import ui.Websocket.WebSocketFacade;
 import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -23,6 +25,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
     String authToken;
     String url;
     WebSocketFacade ws;
+    public GameData currentGame;
 
     public Repl (String url){
         this.url = url;
@@ -36,7 +39,8 @@ public class Repl implements ui.Websocket.NotificationHandler {
             preLoginUI(scanner);
             Postlogin postlogin = new Postlogin(authToken, url, this, username);
             postLoginUI(scanner, postlogin);
-            board = postlogin.currentGame.getBoard();
+            currentGame = postlogin.currentGame;
+            board = postlogin.currentGame.game().getBoard();
             gameplayUI(scanner, postlogin.globalColor, postlogin.gameID);
         }
     }
@@ -101,7 +105,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
     }
 
     private void gameplayUI(Scanner scanner, ChessGame.TeamColor color, int gameID){
-        Gameplay gameplay = new Gameplay(authToken, url, ws, username, gameID);
+        Gameplay gameplay = new Gameplay(authToken, url, ws, gameID);
         if (joinStatus) {
             this.color = color;
             BoardDrawer.drawBoard(board, color);

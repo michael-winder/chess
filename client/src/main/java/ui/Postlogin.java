@@ -23,9 +23,10 @@ public class Postlogin {
     private final HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
     public WebSocketFacade ws;
     public HashMap<Integer, GameData> gameList = new HashMap<Integer, GameData>();
-    public ChessGame currentGame;
+    public GameData currentGame;
     public String username;
     public int gameID;
+    public Collection<GameData> gameData;
 
     public Postlogin(String authToken, String url, NotificationHandler notificationHandler, String username){
         this.url = url;
@@ -85,7 +86,8 @@ public class Postlogin {
             return "Invalid list request. Please simply type: list\n";
         }
         ListResponse response = serverFacade.listGames(authToken);
-        for (GameData game : response.games()){
+        gameData = response.games();
+        for (GameData game : gameData){
             gameList.put(game.gameID(), game);
         }
         StringBuilder gameString = new StringBuilder();
@@ -136,7 +138,7 @@ public class Postlogin {
         serverFacade.joinGame(request, authToken);
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID, true, username, globalColor);
+        ws.connect(authToken, gameID);
         return "Joined!\n";
     }
 
@@ -151,11 +153,11 @@ public class Postlogin {
         gameID = gameIDs.get(Integer.parseInt(params[0]));
         currentGame = getGame(gameID);
         ws = new WebSocketFacade(url, notificationHandler);
-        ws.connect(authToken, gameID, false, username, null);
+        ws.connect(authToken, gameID);
         return "Observing!\n";
     }
 
-    public ChessGame getGame(int gameID){
-        return gameList.get(gameID).game();
+    public GameData getGame(int gameID){
+        return gameList.get(gameID);
     }
 }

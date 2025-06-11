@@ -49,26 +49,19 @@ public class WebSocketHandler {
 
     private void join(Session session, UserGameCommand command) throws IOException, DataAccessException {
         if (authAccess.getAuth(command.getAuthToken()) == null || gameAccess.getGame(command.getGameID()) == null){
-            ErrorMesage errorMesage = new ErrorMesage("Error: invalid credentials");
-            String error = new Gson().toJson(errorMesage);
-            session.getRemote().sendString(error);
+            sendError(session, "Error: invalid credentials");
         }
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         GameData gameData = gameAccess.getGame(command.getGameID());
         connections.add(authData.username(), session);
-        NotificationMessage notification;
         if (Objects.equals(gameData.whiteUsername(), authData.username())){
-            notification = new NotificationMessage(authData.username() + " has joined the game as white");
+            sendNotification(authData.username() + " has joined the game as white", authData.username());
         } else if (Objects.equals(gameData.blackUsername(), authData.username())){
-            notification = new NotificationMessage(authData.username() + " has joined the game as black");
+            sendNotification(authData.username() + " has joined the game as black", authData.username());
         } else {
-            notification = new NotificationMessage(authData.username() + " is observing the game");
+            sendNotification(authData.username() + " is observing the game", authData.username());
         }
-        String serverMessage = new Gson().toJson(notification);
-        connections.broadcast(authData.username(), serverMessage);
-        LoadGameMessage gameMessage = new LoadGameMessage(gameData);
-        String game = new Gson().toJson(gameMessage);
-        session.getRemote().sendString(game);
+        loadGameMessage(session, gameData, false);
     }
 
     private void leave(Session session,  UserGameCommand command) throws IOException, DataAccessException {
@@ -84,9 +77,7 @@ public class WebSocketHandler {
         GameData updatedGame = new GameData(command.getGameID(), whiteUser, blackUser, gameData.gameName(), gameData.game());
         gameAccess.updateGame(updatedGame);
         connections.remove(authData.username());
-        NotificationMessage notification = new NotificationMessage(authData.username() + " has left the game");
-        String serverMessage = new Gson().toJson(notification);
-        connections.broadcast(authData.username(), serverMessage);
+        sendNotification(authData.username() + " has left the game", authData.username());
     }
 
     private void makeMove(Session session,  String message) throws IOException, DataAccessException {
@@ -97,18 +88,48 @@ public class WebSocketHandler {
         try {
             chessGame.makeMove(command.move);
         } catch (InvalidMoveException e){
-            ErrorMesage errorMesage = new ErrorMesage("Error: invalid move");
-            String error = new Gson().toJson(errorMesage);
-            session.getRemote().sendString(error);
+            sendError(session, "Error: invalid move");
             return;
         }
         GameData updatedGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
         gameAccess.updateGame(updatedGame);
-        LoadGameMessage gameMessage = new LoadGameMessage(updatedGame);
-        String game = new Gson().toJson(gameMessage);
-        connections.broadcast("none121", game);
-        NotificationMessage notification = new NotificationMessage(authData.username() + " has made a move");
+        loadGameMessage(session, updatedGame, true);
+        sendNotification(authData.username() + " has made a move", authData.username());
+    }
+
+    private ChessGame.TeamColor getColor(GameData gameData, AuthData authData){
+        if (Objects.equals(authData.username(), gameData.blackUsername())){
+            return  ChessGame.TeamColor.BLACK;
+        } else if (Objects.equals(authData.username(), gameData.whiteUsername())){
+            return ChessGame.TeamColor.WHITE;
+        } else {
+            return null;
+        }
+    }
+
+    private boolean checkTurn(ChessGame.TeamColor color, ChessGame game){
+        return game.getTeamTurn() == color;
+    }
+
+    private void sendNotification(String message, String username) throws IOException{
+        NotificationMessage notification = new NotificationMessage(message);
         String serverMessage = new Gson().toJson(notification);
-        connections.broadcast(authData.username(), serverMessage);
+        connections.broadcast(username, serverMessage);
+    }
+
+    private void sendError(Session session, String errorMessage) throws IOException{
+        ErrorMesage errorMesage = new ErrorMesage(errorMessage);
+        String error = new Gson().toJson(errorMesage);
+        session.getRemote().sendString(error);
+    }
+
+    private void loadGameMessage (Session session, GameData chessGame, boolean broadcast) throws IOException{
+        LoadGameMessage gameMessage = new LoadGameMessage(chessGame);
+        String game = new Gson().toJson(gameMessage);
+        if (broadcast){
+            connections.broadcast("none121", game);
+        } else {
+            session.getRemote().sendString(game);
+        }
     }
 }

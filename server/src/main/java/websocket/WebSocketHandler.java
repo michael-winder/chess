@@ -12,6 +12,7 @@ import websocket.commands.ConnectCommand;
 import websocket.commands.LeaveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.JoinNotification;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 import websocket.ConnectionManager;
 
@@ -59,6 +60,9 @@ public class WebSocketHandler {
         }
         String serverMessage = new Gson().toJson(notification);
         connections.broadcast(authData.username(), serverMessage);
+        LoadGameMessage gameMessage = new LoadGameMessage(gameData);
+        String game = new Gson().toJson(gameMessage);
+        session.getRemote().sendString(game);
     }
 
     private void leave(Session session,  UserGameCommand command) throws IOException, DataAccessException {

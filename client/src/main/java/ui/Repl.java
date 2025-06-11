@@ -2,10 +2,12 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
 import model.GameData;
 import ui.Websocket.WebSocketFacade;
 import websocket.messages.JoinNotification;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Collection;
@@ -108,7 +110,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
         Gameplay gameplay = new Gameplay(authToken, url, ws, gameID);
         if (joinStatus) {
             this.color = color;
-            BoardDrawer.drawBoard(board, color);
+//            BoardDrawer.drawBoard(board, color);
         }
         String result = "";
         while(!result.equals("Left game\n")){
@@ -123,11 +125,13 @@ public class Repl implements ui.Websocket.NotificationHandler {
         }
     }
 
-    public void notify(JoinNotification message) {
-        if (message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-            BoardDrawer.drawBoard(board, color);
-        } else if (message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION) {
-            System.out.println(message.message);
+    public void notify(ServerMessage.ServerMessageType type, String message) {
+        if (type == ServerMessage.ServerMessageType.LOAD_GAME){
+            LoadGameMessage gameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+            BoardDrawer.drawBoard(gameMessage.gameData.game().getBoard(), color);
+        } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
+            JoinNotification joinMessage = new Gson().fromJson(message, JoinNotification.class);
+            System.out.println(joinMessage.message);
         } else {
             System.out.println("Error");
         }

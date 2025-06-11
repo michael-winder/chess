@@ -4,5 +4,5 @@ import websocket.messages.JoinNotification;
 import websocket.messages.ServerMessage;
 
 public interface NotificationHandler {
-    void notify(JoinNotification message);
+    void notify(ServerMessage.ServerMessageType type, String message);
 }

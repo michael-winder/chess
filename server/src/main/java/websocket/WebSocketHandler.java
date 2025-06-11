@@ -26,7 +26,7 @@ public class WebSocketHandler {
     public final GameDAO gameAccess;
     Session session;
     private final ConnectionManager connections = new ConnectionManager();
-    ChessGame chessGame = new ChessGame();
+    ChessGame chessGame;
     public WebSocketHandler() {
         try {
             this.userAccess = new UserSQLAccess();
@@ -89,6 +89,7 @@ public class WebSocketHandler {
             sendError(session, "Error: invalid credentials");
         }
         GameData gameData = gameAccess.getGame(command.getGameID());
+        chessGame = gameData.game();
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         chessGame.currentBoard = gameAccess.getGame(command.getGameID()).game().currentBoard;
         if (!checkTurn(getColor(gameData, authData), gameData.game())){
@@ -104,9 +105,7 @@ public class WebSocketHandler {
         GameData updatedGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
         gameAccess.updateGame(updatedGame);
         sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) + " to " + moveReturn(command.move.getEndPosition()), authData.username(), true);
-        if (isTeamInCheckMate(updatedGame)){
-            sendNotification("GAME OVER", "none121", true);
-        } else {
+        if (!teamInCheckMateMessager(updatedGame)){
             isTeamInCheck(updatedGame);
         }
         loadGameMessage(session, updatedGame, true);
@@ -138,7 +137,7 @@ public class WebSocketHandler {
         }
     }
 
-    private boolean isTeamInCheckMate(GameData gameData) throws IOException{
+    private boolean teamInCheckMateMessager(GameData gameData) throws IOException{
         if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
             sendNotification(gameData.whiteUsername()+ " is in checkmate!", "none121", true);
             return true;

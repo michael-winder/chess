@@ -55,11 +55,15 @@ public class Gameplay {
     }
 
     public String leave(String... params){
-        if (params.length != 0){
-            return "Invalid leave request. Please simply type: leave\n";
+        try {
+            if (params.length != 0){
+                return "Invalid leave request. Please simply type: leave\n";
+            }
+            ws.leave(authToken, gameID);
+            return "Left game\n";
+        } catch (IllegalStateException e) {
+            return "Left game\n";
         }
-        ws.leave(authToken, gameID);
-        return "Left game\n";
     }
 
     public String redraw(String... params){
@@ -77,7 +81,7 @@ public class Gameplay {
         ChessPosition endPosition = moveCreator(params[2]);
         ChessMove move = new ChessMove(startPosition, endPosition, null);
         ws.makeMove(authToken, gameID, move);
-        return "Success!\n";
+        return "Move:\n";
     }
 
     private ChessPosition moveCreator(String moveString){

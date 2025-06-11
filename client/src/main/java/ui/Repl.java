@@ -25,6 +25,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
     String url;
     WebSocketFacade ws;
     public GameData currentGame;
+    public boolean gameOver;
 
     public Repl (String url){
         this.url = url;
@@ -84,6 +85,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
                 if (Objects.equals(result, "Joined!\n") || Objects.equals(result, "Observing!\n")){
                     joinStatus = true;
                     ws = postlogin.ws;
+                    color = postlogin.globalColor;
                     break;
                 }
             } catch (Throwable e){
@@ -105,12 +107,8 @@ public class Repl implements ui.Websocket.NotificationHandler {
 
     private void gameplayUI(Scanner scanner, ChessGame.TeamColor color, int gameID){
         Gameplay gameplay = new Gameplay(authToken, url, ws, gameID);
-        if (joinStatus) {
-            this.color = color;
-//            BoardDrawer.drawBoard(board, color);
-        }
         String result = "";
-        while(!result.equals("Left game\n")){
+        while(!result.equals("Left game\n") && joinStatus){
             String line = scanner.nextLine();
             try {
                 result = gameplay.eval(line);
@@ -132,6 +130,9 @@ public class Repl implements ui.Websocket.NotificationHandler {
         } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
             NotificationMessage joinMessage = new Gson().fromJson(message, NotificationMessage.class);
             System.out.println(joinMessage.message);
+            if (Objects.equals(message, "GAME OVER!")){
+                joinStatus = false;
+            }
         } else {
             ErrorMesage errorMesage = new Gson().fromJson(message, ErrorMesage.class);
             System.out.println(errorMesage.errorMessage);

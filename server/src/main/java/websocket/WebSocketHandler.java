@@ -80,8 +80,6 @@ public class WebSocketHandler {
             whiteUser = null;
         } else if (Objects.equals(gameData.blackUsername(), authData.username())){
             blackUser = null;
-        } else {
-            return;
         }
         GameData updatedGame = new GameData(command.getGameID(), whiteUser, blackUser, gameData.gameName(), gameData.game());
         gameAccess.updateGame(updatedGame);

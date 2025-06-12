@@ -116,7 +116,7 @@ public class Repl implements ui.websocket.NotificationHandler {
                 result = gameplay.eval(line);
                 System.out.print(result);
                 if (Objects.equals(result, "Redraw request successful!\n")){
-                    BoardDrawer.drawBoard(board, color);
+                    BoardDrawer.drawBoard(currentGame.game().getBoard(), color);
                 }
             } catch (Throwable e) {
                 var msg = e.toString();

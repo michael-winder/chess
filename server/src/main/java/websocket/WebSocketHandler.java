@@ -56,13 +56,13 @@ public class WebSocketHandler {
         }
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         GameData gameData = gameAccess.getGame(command.getGameID());
-        connections.add(authData.username(), session);
+        connections.add(gameData.gameID() ,authData.username(), session);
         if (Objects.equals(gameData.whiteUsername(), authData.username())){
-            sendNotification(authData.username() + " has joined the game as white", authData.username(), true);
+            sendNotification(authData.username() + " has joined the game as white", authData.username(), true, command.getGameID());
         } else if (Objects.equals(gameData.blackUsername(), authData.username())){
-            sendNotification(authData.username() + " has joined the game as black", authData.username(), true);
+            sendNotification(authData.username() + " has joined the game as black", authData.username(), true, command.getGameID());
         } else {
-            sendNotification(authData.username() + " is observing the game", authData.username(), true);
+            sendNotification(authData.username() + " is observing the game", authData.username(), true, command.getGameID());
         }
         loadGameMessage(session, gameData, false);
     }
@@ -81,7 +81,7 @@ public class WebSocketHandler {
         GameData updatedGame = new GameData(command.getGameID(), whiteUser, blackUser, gameData.gameName(), gameData.game());
         gameAccess.updateGame(updatedGame);
         connections.remove(authData.username());
-        sendNotification(authData.username() + " has left the game", authData.username(), true);
+        sendNotification(authData.username() + " has left the game", authData.username(), true, command.getGameID());
     }
 
     private void makeMove(Session session,  String message) throws IOException, DataAccessException {
@@ -110,7 +110,7 @@ public class WebSocketHandler {
         }
         GameData updatedGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
         gameAccess.updateGame(updatedGame);
-        sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) + " to " + moveReturn(command.move.getEndPosition()), authData.username(), true);
+        sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) + " to " + moveReturn(command.move.getEndPosition()), authData.username(), true, command.getGameID());
         if (!teamInCheckMateMessenger(updatedGame)){
             isTeamInCheck(updatedGame);
         }
@@ -133,7 +133,7 @@ public class WebSocketHandler {
         }
         gameData.game().gameOver = true;
         gameAccess.updateGame(gameData);
-        sendNotification(authData.username() + " has resigned. GAME OVER!\n", "none121", true);
+        sendNotification(authData.username() + " has resigned. GAME OVER!\n", "none121", true, command.getGameID());
     }
 
 
@@ -154,10 +154,10 @@ public class WebSocketHandler {
 
     private boolean isTeamInCheck(GameData gameData) throws IOException{
         if (gameData.game().isInCheck(ChessGame.TeamColor.WHITE)){
-            sendNotification(gameData.whiteUsername()+ " is in check!", "none121", true);
+            sendNotification(gameData.whiteUsername()+ " is in check!", "none121", true, gameData.gameID());
             return true;
         } else if (gameData.game().isInCheck(ChessGame.TeamColor.BLACK)){
-            sendNotification(gameData.blackUsername()+ " is in check!", "none121", true);
+            sendNotification(gameData.blackUsername()+ " is in check!", "none121", true, gameData.gameID());
             return true;
         } else {
             return false;
@@ -166,12 +166,12 @@ public class WebSocketHandler {
 
     private boolean teamInCheckMateMessenger(GameData gameData) throws IOException, DataAccessException {
         if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-            sendNotification(gameData.whiteUsername()+ " is in checkmate! GAME OVER\n", "none121", true);
+            sendNotification(gameData.whiteUsername()+ " is in checkmate! GAME OVER\n", "none121", true, gameData.gameID());
             gameData.game().gameOver = true;
             gameAccess.updateGame(gameData);
             return true;
         } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            sendNotification(gameData.blackUsername()+ " is in checkmate! GAME OVER\n", "none121", true);
+            sendNotification(gameData.blackUsername()+ " is in checkmate! GAME OVER\n", "none121", true, gameData.gameID());
             gameData.game().gameOver = true;
             gameAccess.updateGame(gameData);
             return true;
@@ -180,11 +180,11 @@ public class WebSocketHandler {
         }
     }
 
-    private void sendNotification(String message, String username, boolean broadcast) throws IOException{
+    private void sendNotification(String message, String username, boolean broadcast, int gameID) throws IOException{
         NotificationMessage notification = new NotificationMessage(message);
         String serverMessage = new Gson().toJson(notification);
         if (broadcast) {
-            connections.broadcast(username, serverMessage);
+            connections.broadcast(username, serverMessage, gameID);
         } else {
             session.getRemote().sendString(serverMessage);
         }
@@ -200,7 +200,7 @@ public class WebSocketHandler {
         LoadGameMessage gameMessage = new LoadGameMessage(chessGame);
         String game = new Gson().toJson(gameMessage);
         if (broadcast){
-            connections.broadcast("none121", game);
+            connections.broadcast("none121", game, chessGame.gameID());
         } else {
             session.getRemote().sendString(game);
         }

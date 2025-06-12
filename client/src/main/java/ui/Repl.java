@@ -130,7 +130,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
         } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
             NotificationMessage joinMessage = new Gson().fromJson(message, NotificationMessage.class);
             System.out.println(joinMessage.message);
-            if (Objects.equals(message, "GAME OVER!")){
+            if (message.contains("GAME OVER!\n")){
                 joinStatus = false;
             }
         } else {

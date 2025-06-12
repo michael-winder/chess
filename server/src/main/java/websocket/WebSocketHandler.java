@@ -15,6 +15,7 @@ import websocket.messages.ErrorMesage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.LoadGameMessage;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -44,13 +45,14 @@ public class WebSocketHandler {
             case CONNECT -> join(session, command);
             case LEAVE -> leave(session, command);
             case MAKE_MOVE -> makeMove(session, message);
+            case RESIGN -> resign(session, command);
         }
     }
 
     private void join(Session session, UserGameCommand command) throws IOException, DataAccessException {
         this.session = session;
         if (authAccess.getAuth(command.getAuthToken()) == null || gameAccess.getGame(command.getGameID()) == null){
-            sendError(session, "Error: invalid credentials");
+            sendError(session, "Error: invalid credentials\n");
         }
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         GameData gameData = gameAccess.getGame(command.getGameID());
@@ -86,30 +88,55 @@ public class WebSocketHandler {
         this.session = session;
         MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
         if (authAccess.getAuth(command.getAuthToken()) == null || gameAccess.getGame(command.getGameID()) == null){
-            sendError(session, "Error: invalid credentials");
+            sendError(session, "Error: invalid credentials\n");
         }
         GameData gameData = gameAccess.getGame(command.getGameID());
+        if (gameData.game().gameOver){
+            sendError(session, "Error: This game is over\n");
+            return;
+        }
         chessGame = gameData.game();
         AuthData authData = authAccess.getAuth(command.getAuthToken());
         chessGame.currentBoard = gameAccess.getGame(command.getGameID()).game().currentBoard;
         if (!checkTurn(getColor(gameData, authData), gameData.game())){
-            sendError(session, "Error: it is not your turn!");
+            sendError(session, "Error: it is not your turn!\n");
             return;
         }
         try {
             chessGame.makeMove(command.move);
         } catch (InvalidMoveException e){
-            sendError(session, "Error: invalid move");
+            sendError(session, "Error: invalid move\n");
             return;
         }
         GameData updatedGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
         gameAccess.updateGame(updatedGame);
         sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) + " to " + moveReturn(command.move.getEndPosition()), authData.username(), true);
-        if (!teamInCheckMateMessager(updatedGame)){
+        if (!teamInCheckMateMessenger(updatedGame)){
             isTeamInCheck(updatedGame);
         }
         loadGameMessage(session, updatedGame, true);
     }
+
+    private void resign(Session session,  UserGameCommand command) throws IOException, DataAccessException {
+        if (authAccess.getAuth(command.getAuthToken()) == null || gameAccess.getGame(command.getGameID()) == null){
+            sendError(session, "Error: invalid credentials\n");
+        }
+        AuthData authData = authAccess.getAuth(command.getAuthToken());
+        GameData gameData = gameAccess.getGame(command.getGameID());
+        if (gameData.game().gameOver){
+            sendError(session, "Game is already over\n");
+            return;
+        }
+        if (!Objects.equals(gameData.blackUsername(), authData.username()) && !Objects.equals(gameData.whiteUsername(), authData.username())){
+            sendError(session, "Error: Observers can't resign\n");
+            return;
+        }
+        gameData.game().gameOver = true;
+        gameAccess.updateGame(gameData);
+        sendNotification(authData.username() + " has resigned. GAME OVER!\n", "none121", true);
+    }
+
+
 
     private ChessGame.TeamColor getColor(GameData gameData, AuthData authData){
         if (Objects.equals(authData.username(), gameData.blackUsername())){
@@ -137,12 +164,16 @@ public class WebSocketHandler {
         }
     }
 
-    private boolean teamInCheckMateMessager(GameData gameData) throws IOException{
+    private boolean teamInCheckMateMessenger(GameData gameData) throws IOException, DataAccessException {
         if (gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-            sendNotification(gameData.whiteUsername()+ " is in checkmate!", "none121", true);
+            sendNotification(gameData.whiteUsername()+ " is in checkmate! GAME OVER\n", "none121", true);
+            gameData.game().gameOver = true;
+            gameAccess.updateGame(gameData);
             return true;
         } else if (gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            sendNotification(gameData.blackUsername()+ " is in checkmate!", "none121", true);
+            sendNotification(gameData.blackUsername()+ " is in checkmate! GAME OVER\n", "none121", true);
+            gameData.game().gameOver = true;
+            gameAccess.updateGame(gameData);
             return true;
         } else {
             return false;

@@ -14,6 +14,7 @@ import java.util.zip.CheckedInputStream;
 public class ChessGame {
     public ChessBoard currentBoard;
     private int turnTracker;
+    public boolean gameOver;
     public ChessGame() {
         currentBoard = new ChessBoard();
         currentBoard.resetBoard();

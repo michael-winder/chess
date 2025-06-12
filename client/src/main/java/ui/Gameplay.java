@@ -8,10 +8,7 @@ import model.GameData;
 import serverHelp.ServerFacade;
 import ui.Websocket.WebSocketFacade;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class Gameplay {
 
@@ -36,8 +33,8 @@ public class Gameplay {
         return switch (cmd){
             case "redraw" -> redraw(params);
             case "leave" -> leave(params);
-            case "make" -> makeMove(params);
-//            case "resign" -> resign(params);
+            case "move" -> makeMove(params);
+            case "resign" -> resign(params);
 //            case "highlight" -> highlight(params);
             default -> help();
         };
@@ -74,14 +71,29 @@ public class Gameplay {
     }
 
     public String makeMove(String... params){
-        if (params.length != 3 && !Objects.equals(params[0], "move")){
-            return "Invalid make move request. Please use the format: make move <STARTING POSITION> <ENDING POSITION>\n";
+        if (params.length != 2){
+            return "Invalid make move request. Please use the format: move <STARTING POSITION> <ENDING POSITION>\n";
         }
         ChessPosition startPosition = moveCreator(params[1]);
         ChessPosition endPosition = moveCreator(params[2]);
         ChessMove move = new ChessMove(startPosition, endPosition, null);
         ws.makeMove(authToken, gameID, move);
         return "Move:\n";
+    }
+
+    public String resign(String... params){
+        if (params.length != 0){
+            return "Invalid resign request. Please simply type: resign\n";
+        }
+        System.out.print("Are you sure you want to resign? Type yes to continue or anything else to cancel\n");
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine();
+        if (Objects.equals(line, "yes")){
+            ws.resign(authToken, gameID);
+            return "Resigned\n";
+        } else {
+            return "Good, I knew you weren't a quitter\n";
+        }
     }
 
     private ChessPosition moveCreator(String moveString){

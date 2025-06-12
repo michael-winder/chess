@@ -14,7 +14,7 @@ import responses.ListResponse;
 import responses.LoginResponse;
 import responses.RegisterResponse;
 import server.Server;
-import serverHelp.ServerFacade;
+import server_help.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
 

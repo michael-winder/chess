@@ -6,11 +6,10 @@ import model.GameData;
 import requests.CreateRequest;
 import requests.JoinRequest;
 import responses.ListResponse;
-import serverHelp.ServerFacade;
-import ui.Websocket.WebSocketFacade;
-import ui.Websocket.NotificationHandler;
+import server_help.ServerFacade;
+import ui.websocket.WebSocketFacade;
+import ui.websocket.NotificationHandler;
 
-import java.net.http.WebSocket;
 import java.util.*;
 
 public class Postlogin {

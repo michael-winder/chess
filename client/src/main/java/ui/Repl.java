@@ -4,7 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
-import ui.Websocket.WebSocketFacade;
+import ui.websocket.WebSocketFacade;
 import websocket.messages.ErrorMesage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.LoadGameMessage;
@@ -13,7 +13,7 @@ import websocket.messages.ServerMessage;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Repl implements ui.Websocket.NotificationHandler {
+public class Repl implements ui.websocket.NotificationHandler {
     Prelogin prelogin;
     public boolean loginStatus = false;
     public boolean joinStatus = false;

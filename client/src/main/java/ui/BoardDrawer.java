@@ -87,7 +87,8 @@ public class BoardDrawer {
         }
     }
 
-    private static void drawChessRow(PrintStream out, Boolean startWhite, String row, String[] board, ArrayList<ChessPosition> endPositions, ChessGame.TeamColor color) {
+    private static void drawChessRow(PrintStream out, Boolean startWhite, String row, String[] board,
+                                     ArrayList<ChessPosition> endPositions, ChessGame.TeamColor color) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(row);

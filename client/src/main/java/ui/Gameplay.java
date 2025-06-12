@@ -1,12 +1,11 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import model.GameData;
-import serverHelp.ServerFacade;
-import ui.Websocket.WebSocketFacade;
+import server_help.ServerFacade;
+import ui.websocket.WebSocketFacade;
 
 import java.util.*;
 

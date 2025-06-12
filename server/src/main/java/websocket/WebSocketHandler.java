@@ -110,7 +110,8 @@ public class WebSocketHandler {
         }
         GameData updatedGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), chessGame);
         gameAccess.updateGame(updatedGame);
-        sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) + " to " + moveReturn(command.move.getEndPosition()), authData.username(), true, command.getGameID());
+        sendNotification(authData.username() + " has made a move from " + moveReturn(command.move.getStartPosition()) +
+                " to " + moveReturn(command.move.getEndPosition()), authData.username(), true, command.getGameID());
         if (!teamInCheckMateMessenger(updatedGame)){
             isTeamInCheck(updatedGame);
         }

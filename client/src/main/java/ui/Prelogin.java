@@ -4,7 +4,7 @@ import requests.LoginRequest;
 import requests.RegisterRequest;
 import responses.LoginResponse;
 import responses.RegisterResponse;
-import server_help.ServerFacade;
+import server.help.ServerFacade;
 
 import java.util.Arrays;
 

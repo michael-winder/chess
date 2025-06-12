@@ -4,7 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import model.GameData;
-import server_help.ServerFacade;
+import server.help.ServerFacade;
 import ui.websocket.WebSocketFacade;
 
 import java.util.*;

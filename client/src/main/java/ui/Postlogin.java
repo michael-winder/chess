@@ -6,7 +6,7 @@ import model.GameData;
 import requests.CreateRequest;
 import requests.JoinRequest;
 import responses.ListResponse;
-import server_help.ServerFacade;
+import server.help.ServerFacade;
 import ui.websocket.WebSocketFacade;
 import ui.websocket.NotificationHandler;
 

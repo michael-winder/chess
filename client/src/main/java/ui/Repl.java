@@ -35,9 +35,9 @@ public class Repl implements ui.Websocket.NotificationHandler {
     public void run(){
         System.out.println("WELCOME TO THE MOST EPIC CHESS GAME EVER! Type help to get started.");
         Scanner scanner = new Scanner(System.in);
+        Postlogin postlogin = new Postlogin(authToken, url, this, username);
         while (!quitStatus) {
             preLoginUI(scanner);
-            Postlogin postlogin = new Postlogin(authToken, url, this, username);
             postLoginUI(scanner, postlogin);
             currentGame = postlogin.currentGame;
             board = postlogin.currentGame.game().getBoard();
@@ -106,7 +106,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
     }
 
     private void gameplayUI(Scanner scanner, ChessGame.TeamColor color, int gameID, GameData gameData){
-        Gameplay gameplay = new Gameplay(authToken, url, ws, gameID, gameData, color);
+        Gameplay gameplay = new Gameplay(authToken, url, ws, gameID, gameData, color, this);
         String result = "";
         while(!result.equals("Left game\n") && joinStatus){
             String line = scanner.nextLine();
@@ -126,7 +126,8 @@ public class Repl implements ui.Websocket.NotificationHandler {
     public void notify(ServerMessage.ServerMessageType type, String message) {
         if (type == ServerMessage.ServerMessageType.LOAD_GAME){
             LoadGameMessage gameMessage = new Gson().fromJson(message, LoadGameMessage.class);
-            BoardDrawer.drawBoard(gameMessage.game.game().getBoard(), color);
+            currentGame = gameMessage.game;
+            BoardDrawer.drawBoard(currentGame.game().getBoard(), color);
         } else if (type == ServerMessage.ServerMessageType.NOTIFICATION) {
             NotificationMessage joinMessage = new Gson().fromJson(message, NotificationMessage.class);
             System.out.println(joinMessage.message);

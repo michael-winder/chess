@@ -19,8 +19,9 @@ public class Gameplay {
     public int gameID;
     public GameData gameData;
     public ChessGame.TeamColor color;
+    Repl repl;
 
-    public Gameplay(String authToken, String url, WebSocketFacade ws, int gameID, GameData gameData, ChessGame.TeamColor color){
+    public Gameplay(String authToken, String url, WebSocketFacade ws, int gameID, GameData gameData, ChessGame.TeamColor color, Repl repl){
         this.url = url;
         this.authToken = authToken;
         this.serverFacade = new ServerFacade(url);
@@ -28,6 +29,7 @@ public class Gameplay {
         this.gameID = gameID;
         this.gameData = gameData;
         this.color = color;
+        this.repl = repl;
     }
 
     public String eval(String input){
@@ -78,8 +80,8 @@ public class Gameplay {
         if (params.length != 2){
             return "Invalid make move request. Please use the format: move <STARTING POSITION> <ENDING POSITION>\n";
         }
-        ChessPosition startPosition = moveCreator(params[1]);
-        ChessPosition endPosition = moveCreator(params[2]);
+        ChessPosition startPosition = moveCreator(params[0]);
+        ChessPosition endPosition = moveCreator(params[1]);
         ChessMove move = new ChessMove(startPosition, endPosition, null);
         ws.makeMove(authToken, gameID, move);
         return "Move:\n";
@@ -104,6 +106,7 @@ public class Gameplay {
         if (params.length != 1){
             return "Invalid leave request. Please simply type: leave\n";
         }
+        GameData gameData = repl.currentGame;
         ChessPosition position = moveCreator(params[0]);
         Collection<ChessMove> possibleMoves = gameData.game().validMoves(position);
         ArrayList<ChessPosition> endPositions = new ArrayList<>();

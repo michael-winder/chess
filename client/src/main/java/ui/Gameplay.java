@@ -17,13 +17,17 @@ public class Gameplay {
     public ServerFacade serverFacade;
     WebSocketFacade ws;
     public int gameID;
+    public GameData gameData;
+    public ChessGame.TeamColor color;
 
-    public Gameplay(String authToken, String url, WebSocketFacade ws, int gameID){
+    public Gameplay(String authToken, String url, WebSocketFacade ws, int gameID, GameData gameData, ChessGame.TeamColor color){
         this.url = url;
         this.authToken = authToken;
         this.serverFacade = new ServerFacade(url);
         this.ws = ws;
         this.gameID = gameID;
+        this.gameData = gameData;
+        this.color = color;
     }
 
     public String eval(String input){
@@ -35,7 +39,7 @@ public class Gameplay {
             case "leave" -> leave(params);
             case "move" -> makeMove(params);
             case "resign" -> resign(params);
-//            case "highlight" -> highlight(params);
+            case "highlight" -> highlight(params);
             default -> help();
         };
     }
@@ -94,6 +98,20 @@ public class Gameplay {
         } else {
             return "Good, I knew you weren't a quitter\n";
         }
+    }
+
+    public String highlight(String... params){
+        if (params.length != 1){
+            return "Invalid leave request. Please simply type: leave\n";
+        }
+        ChessPosition position = moveCreator(params[0]);
+        Collection<ChessMove> possibleMoves = gameData.game().validMoves(position);
+        ArrayList<ChessPosition> endPositions = new ArrayList<>();
+        for (ChessMove move : possibleMoves){
+            endPositions.add(move.getEndPosition());
+        }
+        BoardDrawer.drawPossibleMoves(gameData.game().getBoard(), color, endPositions);
+        return "Possible moves from position " + params[0] + "\n";
     }
 
     private ChessPosition moveCreator(String moveString){

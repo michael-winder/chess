@@ -41,7 +41,7 @@ public class Repl implements ui.Websocket.NotificationHandler {
             postLoginUI(scanner, postlogin);
             currentGame = postlogin.currentGame;
             board = postlogin.currentGame.game().getBoard();
-            gameplayUI(scanner, postlogin.globalColor, postlogin.gameID);
+            gameplayUI(scanner, postlogin.globalColor, postlogin.gameID, currentGame);
         }
     }
 
@@ -105,8 +105,8 @@ public class Repl implements ui.Websocket.NotificationHandler {
         }
     }
 
-    private void gameplayUI(Scanner scanner, ChessGame.TeamColor color, int gameID){
-        Gameplay gameplay = new Gameplay(authToken, url, ws, gameID);
+    private void gameplayUI(Scanner scanner, ChessGame.TeamColor color, int gameID, GameData gameData){
+        Gameplay gameplay = new Gameplay(authToken, url, ws, gameID, gameData, color);
         String result = "";
         while(!result.equals("Left game\n") && joinStatus){
             String line = scanner.nextLine();

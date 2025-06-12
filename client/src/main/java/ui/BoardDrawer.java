@@ -2,13 +2,10 @@ package ui;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
-import ui.EscapeSequences.*;
+import chess.*;
 
 import static ui.EscapeSequences.*;
 
@@ -29,7 +26,19 @@ public class BoardDrawer {
         out.print(ERASE_SCREEN);
 
         drawHeaders(out, color);
-        drawChessBoard(out, board, color);
+        drawChessBoard(out, board, color, new ArrayList<>());
+        drawHeaders(out, color);
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    public static void drawPossibleMoves(ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions){
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        out.print(ERASE_SCREEN);
+
+        drawHeaders(out, color);
+        drawChessBoard(out, board, color, endPositions);
         drawHeaders(out, color);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -63,7 +72,7 @@ public class BoardDrawer {
         setGray(out);
     }
 
-    private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color) {
+    private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions) {
         String[] rows;
         if (color == ChessGame.TeamColor.BLACK){
             rows = BLACK_ROWS;
@@ -74,24 +83,37 @@ public class BoardDrawer {
         String[][] boardStrings = pieceConverter(board, color);
         for (int boardRow = 0; boardRow < 8; ++boardRow) {
             startColor = boardRow % 2 == 1;
-            drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow]);
+            drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow], endPositions, color);
         }
     }
 
-    private static void drawChessRow(PrintStream out, Boolean startWhite, String row, String[] board) {
+    private static void drawChessRow(PrintStream out, Boolean startWhite, String row, String[] board, ArrayList<ChessPosition> endPositions, ChessGame.TeamColor color) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(row);
+        int boardRow = Integer.parseInt(row.trim());
         for (int boardCol = 0; boardCol < 8; ++boardCol) {
             if (startWhite == true) {
                 setWhite(out);
+                if (isPossibleMove(boardRow, boardCol, color, endPositions)){
+                    setGreen(out);
+                }
                 if (boardCol % 2 == 0) {
                     setBlack(out);
+                    if (isPossibleMove(boardRow, boardCol, color, endPositions)){
+                        setDarkGreen(out);
+                    }
                 }
             } else {
                 setBlack(out);
+                if (isPossibleMove(boardRow, boardCol, color, endPositions)){
+                    setDarkGreen(out);
+                }
                 if (boardCol % 2 == 0) {
                     setWhite(out);
+                    if (isPossibleMove(boardRow, boardCol, color, endPositions)){
+                        setGreen(out);
+                    }
                 }
             }
             out.print(board[boardCol]);
@@ -103,10 +125,29 @@ public class BoardDrawer {
         out.println();
     }
 
+    public static boolean isPossibleMove(int row, int col, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions){
+        if (color == ChessGame.TeamColor.BLACK){
+            ChessPosition position = new ChessPosition(row, 8 - col);
+            return endPositions.contains(position);
+        } else {
+            ChessPosition position = new ChessPosition(row, col + 1);
+            return endPositions.contains(position);
+        }
+    }
 
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setDarkGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREEN);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void setGray(PrintStream out) {

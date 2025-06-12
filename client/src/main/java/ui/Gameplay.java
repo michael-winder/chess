@@ -81,6 +81,10 @@ public class Gameplay {
         }
         ChessPosition startPosition = moveCreator(params[0]);
         ChessPosition endPosition = moveCreator(params[1]);
+        if (startPosition.getRow() < 1 || startPosition.getRow() > 8 || startPosition.getColumn() == 9
+                || endPosition.getRow() < 1 || endPosition.getRow() > 8 || endPosition.getColumn() == 9){
+            return "Invalid move. Please try again\n";
+        }
         ChessMove move = new ChessMove(startPosition, endPosition, null);
         ws.makeMove(authToken, gameID, move);
         return "Move:\n";
@@ -109,10 +113,12 @@ public class Gameplay {
         ChessPosition position = moveCreator(params[0]);
         Collection<ChessMove> possibleMoves = gameData.game().validMoves(position);
         ArrayList<ChessPosition> endPositions = new ArrayList<>();
+        ChessPosition startPosition = new ChessPosition(9, 9);
         for (ChessMove move : possibleMoves){
             endPositions.add(move.getEndPosition());
+            startPosition = move.getStartPosition();
         }
-        BoardDrawer.drawPossibleMoves(gameData.game().getBoard(), color, endPositions);
+        BoardDrawer.drawPossibleMoves(gameData.game().getBoard(), color, endPositions, startPosition);
         return "Possible moves from position " + params[0] + "\n";
     }
 

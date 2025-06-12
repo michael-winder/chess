@@ -26,19 +26,19 @@ public class BoardDrawer {
         out.print(ERASE_SCREEN);
 
         drawHeaders(out, color);
-        drawChessBoard(out, board, color, new ArrayList<>());
+        drawChessBoard(out, board, color, new ArrayList<>(), new ChessPosition(9,9));
         drawHeaders(out, color);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    public static void drawPossibleMoves(ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions){
+    public static void drawPossibleMoves(ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions, ChessPosition startPosition){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
         drawHeaders(out, color);
-        drawChessBoard(out, board, color, endPositions);
+        drawChessBoard(out, board, color, endPositions, startPosition);
         drawHeaders(out, color);
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -72,7 +72,7 @@ public class BoardDrawer {
         setGray(out);
     }
 
-    private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions) {
+    private static void drawChessBoard(PrintStream out, ChessBoard board, ChessGame.TeamColor color, ArrayList<ChessPosition> endPositions, ChessPosition startPosition) {
         String[] rows;
         if (color == ChessGame.TeamColor.BLACK){
             rows = BLACK_ROWS;
@@ -83,12 +83,12 @@ public class BoardDrawer {
         String[][] boardStrings = pieceConverter(board, color);
         for (int boardRow = 0; boardRow < 8; ++boardRow) {
             startColor = boardRow % 2 == 1;
-            drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow], endPositions, color);
+            drawChessRow(out, startColor, rows[boardRow], boardStrings[boardRow], endPositions, color, startPosition);
         }
     }
 
     private static void drawChessRow(PrintStream out, Boolean startWhite, String row, String[] board,
-                                     ArrayList<ChessPosition> endPositions, ChessGame.TeamColor color) {
+                                     ArrayList<ChessPosition> endPositions, ChessGame.TeamColor color, ChessPosition startPosition) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
         out.print(row);
@@ -117,6 +117,9 @@ public class BoardDrawer {
                     }
                 }
             }
+            if (isStartPosition(boardRow, boardCol, color, startPosition)){
+                setYellow(out);
+            }
             out.print(board[boardCol]);
         }
         out.print(SET_BG_COLOR_LIGHT_GREY);
@@ -136,6 +139,16 @@ public class BoardDrawer {
         }
     }
 
+    public static boolean isStartPosition(int row, int col, ChessGame.TeamColor color, ChessPosition startPosition){
+        if (color == ChessGame.TeamColor.BLACK){
+            ChessPosition position = new ChessPosition(row, 8 - col);
+            return startPosition.equals(position);
+        } else {
+            ChessPosition position = new ChessPosition(row, col + 1);
+            return startPosition.equals(position);
+        }
+    }
+
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
@@ -149,6 +162,11 @@ public class BoardDrawer {
     private static void setDarkGreen(PrintStream out) {
         out.print(SET_BG_COLOR_DARK_GREEN);
         out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    private static void setYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
+        out.print(SET_TEXT_COLOR_BLACK);
     }
 
     private static void setGray(PrintStream out) {

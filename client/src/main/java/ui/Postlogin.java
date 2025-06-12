@@ -13,16 +13,15 @@ import ui.websocket.NotificationHandler;
 import java.util.*;
 
 public class Postlogin {
-    private final String authToken;
+    public String authToken;
     public ChessGame.TeamColor globalColor = null;
-    public ChessBoard board;
     String url;
     public ServerFacade serverFacade;
     public NotificationHandler notificationHandler;
     private final HashMap <Integer, Integer> gameIDs = new HashMap<Integer, Integer>();
     public WebSocketFacade ws;
     public HashMap<Integer, GameData> gameList = new HashMap<Integer, GameData>();
-    public GameData currentGame;
+    public GameData currentGame = new GameData(1, "not", "not", "not", new ChessGame());
     public String username;
     public int gameID;
     public Collection<GameData> gameData;
@@ -158,5 +157,9 @@ public class Postlogin {
 
     public GameData getGame(int gameID){
         return gameList.get(gameID);
+    }
+
+    public void updateAuth(String authToken){
+        this.authToken = authToken;
     }
 }

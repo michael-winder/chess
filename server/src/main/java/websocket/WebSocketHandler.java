@@ -115,6 +115,9 @@ public class WebSocketHandler {
         if (!teamInCheckMateMessenger(updatedGame)){
             isTeamInCheck(updatedGame);
         }
+        if (isTeamInStaleMate(gameData)){
+            sendNotification("Stalemate. GAME OVER!\n", "none121", true, gameData.gameID());
+        }
         loadGameMessage(session, updatedGame, true);
     }
 
@@ -163,6 +166,10 @@ public class WebSocketHandler {
         } else {
             return false;
         }
+    }
+
+    private boolean isTeamInStaleMate(GameData gameData){
+        return gameData.game().isInStalemate(ChessGame.TeamColor.WHITE) || gameData.game().isInStalemate(ChessGame.TeamColor.BLACK);
     }
 
     private boolean teamInCheckMateMessenger(GameData gameData) throws IOException, DataAccessException {

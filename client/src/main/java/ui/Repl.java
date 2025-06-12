@@ -21,7 +21,7 @@ public class Repl implements ui.websocket.NotificationHandler {
     public ChessGame.TeamColor color;
     public ChessBoard board;
     public String username;
-    String authToken;
+    public String authToken;
     String url;
     WebSocketFacade ws;
     public GameData currentGame;
@@ -38,7 +38,9 @@ public class Repl implements ui.websocket.NotificationHandler {
         Postlogin postlogin = new Postlogin(authToken, url, this, username);
         while (!quitStatus) {
             preLoginUI(scanner);
+            postlogin.updateAuth(prelogin.authToken);
             postLoginUI(scanner, postlogin);
+            authToken = postlogin.authToken;
             currentGame = postlogin.currentGame;
             board = postlogin.currentGame.game().getBoard();
             gameplayUI(scanner, postlogin.globalColor, postlogin.gameID, currentGame);
@@ -120,6 +122,9 @@ public class Repl implements ui.websocket.NotificationHandler {
                 var msg = e.toString();
                 System.out.print(msg);
             }
+        }
+        if (result.equals("Left game\n")){
+            joinStatus = false;
         }
     }
 
